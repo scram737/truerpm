@@ -9,7 +9,7 @@ import { ChannelResolver } from './resolver.js';
 // Currency exchange rates (relative to USD)
 const CURRENCIES = {
   USD: { symbol: '$', rate: 1.00, prefix: true },
-  INR: { symbol: '₹', rate: 84.00, prefix: true },
+  INR: { symbol: '₹', rate: 96.00, prefix: true },
   EUR: { symbol: '€', rate: 0.92, prefix: false },
   GBP: { symbol: '£', rate: 0.79, prefix: true },
   CAD: { symbol: 'C$', rate: 1.36, prefix: true },
@@ -21,6 +21,7 @@ class TrueRpmApp {
   constructor() {
     this.engine = new RevenueEngine();
     this.resolver = new ChannelResolver();
+    this.userHasEditedFxRate = false;
 
     // Default application state (starts with CarryMinati as initial verified channel)
     this.state = {
@@ -57,7 +58,7 @@ class TrueRpmApp {
       joinedDate: 'Apr 16, 2021',
       viewScopeMode: 'this-month',
       // India Tax & FX Conversion State
-      exchangeRate: 84.00,
+      exchangeRate: 96.00,
       indiaTaxRegime: '44ada',
       indiaFlatTaxPercent: 20,
       hasW8Ben: true,
@@ -74,6 +75,39 @@ class TrueRpmApp {
     this.renderModalCountryList();
     this.renderProfileCard();
     this.updateUI();
+    this.fetchLiveExchangeRates();
+  }
+
+  async fetchLiveExchangeRates() {
+    try {
+      const resp = await fetch('https://open.er-api.com/v6/latest/USD');
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (data && data.rates) {
+        if (data.rates.INR) {
+          const liveInr = Number(data.rates.INR.toFixed(2));
+          CURRENCIES.INR.rate = liveInr;
+          if (!this.userHasEditedFxRate) {
+            this.state.exchangeRate = liveInr;
+            if (this.inputExchangeRate) this.inputExchangeRate.value = liveInr.toFixed(2);
+            if (this.sliderExchangeRate) this.sliderExchangeRate.value = Math.min(115, Math.max(75, liveInr));
+            if (this.dispFxRateBadge) this.dispFxRateBadge.textContent = `1 USD = ₹${liveInr.toFixed(2)} (Live FX)`;
+            if (this.proofTaxFxRate) this.proofTaxFxRate.textContent = `1 USD = ₹${liveInr.toFixed(2)}`;
+            const proofNote = document.getElementById('disp-inr-gross-usd-note');
+            if (proofNote) proofNote.textContent = `$5,600 USD @ ₹${liveInr.toFixed(2)}/$`;
+          }
+        }
+        if (data.rates.EUR) CURRENCIES.EUR.rate = Number(data.rates.EUR.toFixed(4));
+        if (data.rates.GBP) CURRENCIES.GBP.rate = Number(data.rates.GBP.toFixed(4));
+        if (data.rates.CAD) CURRENCIES.CAD.rate = Number(data.rates.CAD.toFixed(4));
+        if (data.rates.AUD) CURRENCIES.AUD.rate = Number(data.rates.AUD.toFixed(4));
+        if (data.rates.BRL) CURRENCIES.BRL.rate = Number(data.rates.BRL.toFixed(4));
+
+        this.updateUI();
+      }
+    } catch (e) {
+      console.warn('[TrueRPM] Live FX fetch error, using default market rate ₹96.00:', e);
+    }
   }
 
   initElements() {
@@ -203,6 +237,7 @@ class TrueRpmApp {
     this.cardTierMix = document.getElementById('card-tier-mix');
     this.cardTierDetails = document.getElementById('card-tier-details');
     this.cardEcosystemTotal = document.getElementById('card-ecosystem-total');
+    this.cardEcosystemSub = document.getElementById('card-ecosystem-sub');
 
     // Tabs
     this.tabButtons = document.querySelectorAll('.tab-btn');
@@ -219,6 +254,8 @@ class TrueRpmApp {
     this.statFormatShortsRev = document.getElementById('stat-format-shorts-revenue');
 
     // Multi-stream tab
+    this.streamAdSenseVal = document.getElementById('stream-adsense-val');
+    this.streamAdSenseSub = document.getElementById('stream-adsense-sub');
     this.streamBrandVal = document.getElementById('stream-brand-val');
     this.streamFanVal = document.getElementById('stream-fan-val');
     this.streamFanSub = document.getElementById('stream-fan-sub');
@@ -482,22 +519,26 @@ class TrueRpmApp {
     // India Tax & FX Conversion Event Listeners
     if (this.sliderExchangeRate) {
       this.sliderExchangeRate.addEventListener('input', (e) => {
-        const val = parseFloat(e.target.value) || 84.00;
+        const val = parseFloat(e.target.value) || 96.00;
+        this.userHasEditedFxRate = true;
         this.state.exchangeRate = val;
         CURRENCIES.INR.rate = val;
         if (this.inputExchangeRate) this.inputExchangeRate.value = val.toFixed(2);
         if (this.dispFxRateBadge) this.dispFxRateBadge.textContent = `1 USD = ₹${val.toFixed(2)}`;
+        if (this.proofTaxFxRate) this.proofTaxFxRate.textContent = `1 USD = ₹${val.toFixed(2)}`;
         this.updateUI();
       });
     }
 
     if (this.inputExchangeRate) {
       this.inputExchangeRate.addEventListener('input', (e) => {
-        const val = Math.max(1, parseFloat(e.target.value) || 84.00);
+        const val = Math.max(1, parseFloat(e.target.value) || 96.00);
+        this.userHasEditedFxRate = true;
         this.state.exchangeRate = val;
         CURRENCIES.INR.rate = val;
-        if (this.sliderExchangeRate) this.sliderExchangeRate.value = Math.min(90, Math.max(80, val));
+        if (this.sliderExchangeRate) this.sliderExchangeRate.value = Math.min(115, Math.max(75, val));
         if (this.dispFxRateBadge) this.dispFxRateBadge.textContent = `1 USD = ₹${val.toFixed(2)}`;
+        if (this.proofTaxFxRate) this.proofTaxFxRate.textContent = `1 USD = ₹${val.toFixed(2)}`;
         this.updateUI();
       });
     }
@@ -909,7 +950,8 @@ class TrueRpmApp {
       adblockPercent: this.state.adblockEnabled ? this.state.adblockPercent : 0,
       subscribers: this.state.subscribers,
       hasJoinButton: this.state.hasJoinButton,
-      countryCode: this.state.countryCode
+      countryCode: this.state.countryCode,
+      exchangeRate: this.state.exchangeRate
     });
 
     // 2. Update Input Display Values
@@ -1059,6 +1101,9 @@ class TrueRpmApp {
       this.cardTierDetails.textContent = `Weighted Fill Rate: ${results.metrics.weightedFillRate}%`;
     }
     this.cardEcosystemTotal.innerHTML = `${this.formatMoney(results.earnings.totalEcosystemMonthly)} <span class="unit">/mo</span>`;
+    if (this.cardEcosystemSub) {
+      this.cardEcosystemSub.innerHTML = `AdSense (${this.formatMoney(results.earnings.monthlyAdSense)}) + Brand Deals (${this.formatMoney(results.earnings.brandDealMonthly)}) + Memberships (${this.formatMoney(results.earnings.membershipsMonthlyNetUsd)})`;
+    }
 
     // 7. Update Tabs Content
     this.renderCountryTable(results.countryBreakdown);
@@ -1418,8 +1463,14 @@ class TrueRpmApp {
   }
 
   renderMultiStreamTab(results) {
+    if (this.streamAdSenseVal) {
+      this.streamAdSenseVal.textContent = `${this.formatMoney(results.earnings.monthlyAdSense)} /mo`;
+    }
+    if (this.streamAdSenseSub) {
+      this.streamAdSenseSub.textContent = `Long-form: ${this.formatMoney(results.earnings.longRevenue)} · Shorts Pool: ${this.formatMoney(results.earnings.shortsRevenue)}`;
+    }
     this.streamBrandVal.textContent = `${this.formatMoney(results.earnings.brandDealMonthly)} /mo`;
-    this.streamFanVal.textContent = `${this.formatMoney(results.earnings.fanFundingMonthly)} /mo`;
+    this.streamFanVal.textContent = `${this.formatMoney(results.earnings.membershipsMonthlyNetUsd)} /mo`;
     if (this.streamFanSub) {
       if (results.earnings.hasJoinButton && results.earnings.paidMembersCount > 0) {
         const priceLabel = this.state.countryCode === 'IN' ? '₹89/mo' : '$2.99/mo';

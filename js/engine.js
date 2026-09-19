@@ -55,8 +55,10 @@ export class RevenueEngine {
     adblockPercent = 25,
     subscribers = 100000,
     hasJoinButton = false,
-    countryCode = 'US'
+    countryCode = 'US',
+    exchangeRate = 96.00
   }) {
+    const COUNTRY_DATABASE = COUNTRY_DATA;
     // 1. Normalize traffic shares so they sum to 100
     const rawTotalShare = traffic.reduce((acc, t) => acc + (Number(t.share) || 0), 0) || 100;
     const normalizedTraffic = traffic.map(t => ({
@@ -91,28 +93,38 @@ export class RevenueEngine {
     let tier3Views = 0;
     let totalSponsorReachValue = 0;
 
-    const countryBreakdown = normalizedTraffic.map(item => {
-      const country = this.getCountry(item.code);
-      const share = item.normalizedShare;
+    const countryBreakdown = normalizedTraffic.map(t => {
+      const country = COUNTRY_DATABASE.find(c => c.code === t.code) || {
+        code: t.code,
+        name: t.code,
+        flag: '🌐',
+        tier: 'Tier 3',
+        baseRpm: 0.80,
+        minRpm: 0.30,
+        maxRpm: 1.80,
+        fillRate: 0.65,
+        shortsRpm: 0.020,
+        sponsorCpm: 2.00
+      };
+
+      const share = t.normalizedShare;
       const cViews = monthlyViews * share;
       const cLongViews = longViews * share;
       const cShortsViews = shortsViews * share;
+
       const cLongMonetized = longMonetizedViews * share;
       const cShortsMonetized = shortsMonetizedViews * share;
 
-      // Niche applies strongly to long-form; duration modifier also multiplies long-form inventory
+      // Realistic CPM application: Long-form gets full niche and duration uplift
       const effectiveCountryLongRpm = country.baseRpm * niche.multiplier * duration.multiplier;
       
-      // Shorts RPM has slight niche variation (+- 15%) and depends heavily on country pool
-      const shortsNicheFactor = 0.85 + (niche.multiplier - 1) * 0.15;
-      const effectiveCountryShortsRpm = country.shortsRpm * Math.max(0.6, Math.min(1.8, shortsNicheFactor));
+      // Shorts RPM has a much smaller niche uplift (ad pool distribution model)
+      const effectiveCountryShortsRpm = country.shortsRpm * Math.min(1.4, Math.max(0.7, 1 + (niche.multiplier - 1) * 0.35));
 
-      // Revenue is generated exclusively from monetized playbacks
-      const countryLongRevenue = (cLongMonetized / 1000) * effectiveCountryLongRpm;
-      const countryShortsRevenue = (cShortsMonetized / 1000) * effectiveCountryShortsRpm;
+      const countryLongRevenue = isMonetized ? (cLongMonetized / 1000) * effectiveCountryLongRpm : 0;
+      const countryShortsRevenue = isMonetized ? (cShortsMonetized / 1000) * effectiveCountryShortsRpm : 0;
       const countryTotalRevenue = countryLongRevenue + countryShortsRevenue;
 
-      // Track aggregate weights
       longWeightedRpm += effectiveCountryLongRpm * share;
       shortsWeightedRpm += effectiveCountryShortsRpm * share;
       weightedFillRate += country.fillRate * share;
@@ -166,8 +178,9 @@ export class RevenueEngine {
     // Channel Memberships (Join Button Perks):
     // 0.1% of subscribers join for perks ONLY IF Join button is enabled on YouTube
     const isIndiaChannel = (countryCode === 'IN') || (traffic && traffic[0]?.code === 'IN');
-    const membershipTierPriceUsd = isIndiaChannel ? 1.06 : 2.99; // ₹89/mo in India (~$1.06), $2.99/mo standard global
+    const currentFxRate = Math.max(1, Number(exchangeRate) || 96.00);
     const membershipTierPriceInr = 89;
+    const membershipTierPriceUsd = isIndiaChannel ? (membershipTierPriceInr / currentFxRate) : 2.99; // ₹89/mo in India (~$0.93 at ₹96/USD), $2.99/mo standard global
     const paidMembersCount = (isMonetized && hasJoinButton) ? Math.round(subscribers * 0.001) : 0;
     const membershipsMonthlyGrossUsd = paidMembersCount * membershipTierPriceUsd;
     // YouTube takes 30% cut on Channel Memberships (Creator receives 70% net payout)
@@ -183,7 +196,10 @@ export class RevenueEngine {
     // Affiliate / Merch: can work even if unmonetized!
     const affiliateMonthly = (potentialTotalAdSense > 0 ? potentialTotalAdSense : 500) * (niche.id === 'tech' || niche.id === 'finance' || niche.id === 'automotive' ? 0.25 : 0.06);
 
-    const totalEcosystemMonthly = monthlyTotalAdSense + brandDealMonthly + fanFundingMonthly + (longViews > 50000 ? affiliateMonthly : 0);
+    // Total Creator Ecosystem strictly reflects the 3 core revenue pillars:
+    // AdSense + Brand Deals + Memberships (100% mathematically transparent)
+    const totalEcosystemMonthly = monthlyTotalAdSense + brandDealMonthly + membershipsMonthlyNetUsd;
+    const totalEcosystemWithAffiliateMonthly = totalEcosystemMonthly + superChatsMonthly + (longViews > 50000 ? affiliateMonthly : 0);
 
     // 7. Benchmark Against Standard Generic Trackers (e.g. Social Blade standard model)
     // Most standard trackers assume a flat $0.25 low to $4.00 high CPM applied to ALL views without knowing country or shorts dilution
@@ -355,12 +371,12 @@ export class RevenueEngine {
   calculateIndiaTax({
     monthlyGrossUsd = 0,
     usTrafficSharePercent = 0,
-    exchangeRate = 84.00,
+    exchangeRate = 96.00,
     regime = '44ada',
     flatPercent = 20,
     hasW8Ben = true
   }) {
-    const rate = Math.max(1, Number(exchangeRate) || 84.00);
+    const rate = Math.max(1, Number(exchangeRate) || 96.00);
     const monthlyGrossInr = monthlyGrossUsd * rate;
     const annualGrossInr = monthlyGrossInr * 12;
     const annualGrossUsd = monthlyGrossUsd * 12;

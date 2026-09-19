@@ -669,7 +669,7 @@
                     </div>
                     <div class="step-row">
                       <span>Forex Exchange Rate:</span>
-                      <strong id="proof-tax-fx-rate">1 USD = ₹84.00</strong>
+                      <strong id="proof-tax-fx-rate">1 USD = ₹96.00</strong>
                     </div>
                     <div class="step-row highlight-monetized">
                       <span>🇮🇳 Gross Indian Rupees (₹):</span>
@@ -721,10 +721,10 @@
             <div class="metric-badge-status green" id="card-memberships-badge">✅ Join Button Active</div>
           </div>
 
-          <div class="metric-card glass">
+          <div class="metric-card glass" id="card-ecosystem-container">
             <span class="metric-title">Total Creator Ecosystem</span>
             <div class="metric-value highlight-cyan" id="card-ecosystem-total">$7,420 <span class="unit">/mo</span></div>
-            <span class="metric-sub">AdSense + Brand Deals + Memberships</span>
+            <span class="metric-sub" id="card-ecosystem-sub">AdSense + Brand Deals + Memberships</span>
             <div class="metric-badge-status purple">Complete Creator Model</div>
           </div>
         </div>
@@ -833,6 +833,13 @@
 
               <div class="stream-grid">
                 <div class="stream-card">
+                  <div class="stream-icon">▶️</div>
+                  <h5>YouTube AdSense (Core)</h5>
+                  <div class="stream-val" id="stream-adsense-val">$2,529 /mo</div>
+                  <p class="stream-sub" id="stream-adsense-sub">Direct video monetization from monetized long-form and Shorts creator pool.</p>
+                </div>
+
+                <div class="stream-card">
                   <div class="stream-icon">💼</div>
                   <h5>Brand Sponsorships</h5>
                   <div class="stream-val" id="stream-brand-val">$1,800 /mo</div>
@@ -855,7 +862,7 @@
               </div>
 
               <div class="stream-total-bar">
-                <span>Combined Creator Monthly Take-Home:</span>
+                <span>Total Creator Ecosystem (AdSense + Brand Deals + Memberships):</span>
                 <strong id="stream-grand-total">$7,420 /mo</strong>
               </div>
             </div>
@@ -935,13 +942,13 @@
                 <div class="tax-control-col">
                   <div class="control-header-flex">
                     <label for="input-exchange-rate" class="tax-field-label">USD to INR Exchange Rate</label>
-                    <span class="fx-rate-badge" id="disp-fx-rate-badge">1 USD = ₹84.00</span>
+                    <span class="fx-rate-badge" id="disp-fx-rate-badge">1 USD = ₹96.00 (Live FX)</span>
                   </div>
                   <div class="fx-slider-group">
-                    <input type="range" id="slider-exchange-rate" min="80" max="90" step="0.25" value="84" class="custom-slider">
+                    <input type="range" id="slider-exchange-rate" min="75" max="115" step="0.25" value="96.00" class="custom-slider">
                     <div class="input-with-symbol">
                       <span class="currency-prefix">₹</span>
-                      <input type="number" id="input-exchange-rate" min="70" max="100" step="0.1" value="84.00" class="text-input-sm">
+                      <input type="number" id="input-exchange-rate" min="70" max="120" step="0.10" value="96.00" class="text-input-sm">
                     </div>
                   </div>
                 </div>
@@ -997,8 +1004,8 @@
 
                 <div class="inr-card">
                   <span class="inr-card-subtitle">Gross AdSense Converted</span>
-                  <div class="inr-card-main-val font-text" id="disp-inr-gross-monthly">₹4,70,400 <span class="unit">/mo</span></div>
-                  <div class="inr-card-lakhs" id="disp-inr-gross-usd-note">$5,600 USD @ ₹84.00/$</div>
+                  <div class="inr-card-main-val font-text" id="disp-inr-gross-monthly">₹5,37,600 <span class="unit">/mo</span></div>
+                  <div class="inr-card-lakhs" id="disp-inr-gross-usd-note">$5,600 USD @ ₹96.00/$</div>
                   <div class="inr-card-status-badge badge-amber">Pre-Tax AdSense Payout</div>
                 </div>
               </div>
@@ -1166,6 +1173,6 @@
     </div>
   </footer>
 
-  <script type="module" src="js/app.js?v=3.5.0"></script>
+  <script type="module" src="js/app.js?v=3.6.0"></script>
 </body>
 </html>
