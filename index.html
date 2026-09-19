@@ -462,6 +462,11 @@
             <div class="battle-box reality-box">
               <div class="box-label-accent">TrueRPM Realistic Take-Home</div>
               <div class="reality-highlight-price" id="stat-reality-price">$4,860 <span class="unit">/mo</span></div>
+              <div class="reality-inr-preview" id="disp-reality-inr-preview">
+                <span class="inr-tag">🇮🇳 INR Conversion:</span>
+                <strong id="disp-reality-inr-val">₹4,08,240 /mo</strong>
+                <span class="inr-net-tag" id="disp-reality-inr-net">· In-Hand after Tax: <strong id="disp-reality-inr-net-val">₹3,65,000 /mo</strong></span>
+              </div>
               <div class="reality-bounds">
                 Expected Range: <strong id="stat-reality-range">$3,985 – $6,075</strong>
               </div>
@@ -690,6 +695,7 @@
             <button class="tab-btn" data-target="tab-format-breakdown">Format & Length Breakdown</button>
             <button class="tab-btn" data-target="tab-multistream">Multi-Stream Ecosystem Potential</button>
             <button class="tab-btn" data-target="tab-monthly-division">📅 12-Month Views Division (This Month)</button>
+            <button class="tab-btn highlight-tab-inr" data-target="tab-india-tax">🇮🇳 India Tax & In-Hand Payout</button>
           </div>
 
           <div class="tab-contents">
@@ -876,6 +882,145 @@
                 <div class="foot-stat">
                   <span>Average Divided Month:</span>
                   <strong id="foot-avg-monthly">$4,691 /mo</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- TAB 5: India Dollar Conversion & Income Tax Calculator -->
+            <div class="tab-pane" id="tab-india-tax">
+              <div class="pane-intro">
+                <p>Convert your YouTube AdSense USD earnings into <strong>Indian Rupees (INR)</strong>, deduct <strong>US Withholding Tax (W-8BEN Treaty)</strong>, and calculate <strong>Indian Income Tax</strong> under Section 44ADA (50% Presumptive) or the New Tax Regime to know your exact <strong>Net In-Hand Bank Payout</strong>.</p>
+              </div>
+
+              <!-- Interactive Controls Bar -->
+              <div class="india-tax-controls-bar">
+                <div class="tax-control-col">
+                  <div class="control-header-flex">
+                    <label for="input-exchange-rate" class="tax-field-label">USD to INR Exchange Rate</label>
+                    <span class="fx-rate-badge" id="disp-fx-rate-badge">1 USD = ₹84.00</span>
+                  </div>
+                  <div class="fx-slider-group">
+                    <input type="range" id="slider-exchange-rate" min="80" max="90" step="0.25" value="84" class="custom-slider">
+                    <div class="input-with-symbol">
+                      <span class="currency-prefix">₹</span>
+                      <input type="number" id="input-exchange-rate" min="70" max="100" step="0.1" value="84.00" class="text-input-sm">
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tax-control-col">
+                  <label for="select-tax-regime" class="tax-field-label">Indian Tax Filing Method</label>
+                  <select id="select-tax-regime" class="select-pill tax-select">
+                    <option value="44ada" selected>⭐ Section 44ADA Presumptive (50% Expense Deduction - Recommended)</option>
+                    <option value="new_regime">New Tax Regime Slabs (FY 2024-25 / FY 2025-26)</option>
+                    <option value="flat">Custom Flat Tax %</option>
+                  </select>
+                  <div id="wrap-flat-tax" class="flat-tax-slider-wrap" style="display: none;">
+                    <label for="slider-flat-tax" class="tax-field-label">Flat Tax Rate: <strong id="disp-flat-tax-val">20%</strong></label>
+                    <input type="range" id="slider-flat-tax" min="5" max="40" step="1" value="20" class="custom-slider">
+                  </div>
+                </div>
+
+                <div class="tax-control-col tax-toggle-col">
+                  <span class="tax-field-label">Tax Treaty & Rules</span>
+                  <label class="toggle-checkbox-label">
+                    <input type="checkbox" id="check-w8ben" checked>
+                    <span><strong>W-8BEN Form Submitted</strong> (15% US Tax on US Views; otherwise 30%)</span>
+                  </label>
+                  <label class="toggle-checkbox-label">
+                    <input type="checkbox" id="check-lakhs-format" checked>
+                    <span>Format in Indian Lakhs (L) & Crores (Cr)</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Top 4 In-Hand Payout Hero Cards -->
+              <div class="india-payout-cards-grid">
+                <div class="inr-card inr-card-primary">
+                  <span class="inr-card-subtitle">Net Monthly In-Hand (After All Taxes)</span>
+                  <div class="inr-card-main-val highlight-emerald" id="disp-inr-net-monthly">₹4,20,356 <span class="unit">/mo</span></div>
+                  <div class="inr-card-lakhs" id="disp-inr-net-monthly-lakhs">≈ ₹4.20 Lakhs / month</div>
+                  <div class="inr-card-status-badge badge-green">✔ Credited Directly to Indian Bank Account</div>
+                </div>
+
+                <div class="inr-card">
+                  <span class="inr-card-subtitle">Net Annual In-Hand (Full Year)</span>
+                  <div class="inr-card-main-val highlight-cyan" id="disp-inr-net-annual">₹50,44,272 <span class="unit">/yr</span></div>
+                  <div class="inr-card-lakhs" id="disp-inr-net-annual-lakhs">≈ ₹50.44 Lakhs / year</div>
+                  <div class="inr-card-status-badge badge-blue">Annual Creator Take-Home</div>
+                </div>
+
+                <div class="inr-card">
+                  <span class="inr-card-subtitle">Total Deductions (US + India Tax)</span>
+                  <div class="inr-card-main-val highlight-rose" id="disp-inr-total-tax">- ₹50,044 <span class="unit">/mo</span></div>
+                  <div class="inr-card-lakhs" id="disp-inr-effective-rate">Effective Total Tax Rate: 10.6%</div>
+                  <div class="inr-card-status-badge badge-rose">US DTAA + Indian Income Tax</div>
+                </div>
+
+                <div class="inr-card">
+                  <span class="inr-card-subtitle">Gross AdSense Converted</span>
+                  <div class="inr-card-main-val font-text" id="disp-inr-gross-monthly">₹4,70,400 <span class="unit">/mo</span></div>
+                  <div class="inr-card-lakhs" id="disp-inr-gross-usd-note">$5,600 USD @ ₹84.00/$</div>
+                  <div class="inr-card-status-badge badge-amber">Pre-Tax AdSense Payout</div>
+                </div>
+              </div>
+
+              <!-- Visual Payout Allocation Bar -->
+              <div class="payout-distribution-visual">
+                <div class="payout-bar-track">
+                  <div class="payout-bar-seg seg-inhand" id="bar-seg-inhand" style="width: 89.4%;" title="Net In-Hand Takehome"></div>
+                  <div class="payout-bar-seg seg-indiatax" id="bar-seg-indiatax" style="width: 9.9%;" title="Indian Income Tax"></div>
+                  <div class="payout-bar-seg seg-ustax" id="bar-seg-ustax" style="width: 0.7%;" title="US Withholding Tax"></div>
+                </div>
+                <div class="payout-bar-legend">
+                  <span class="legend-item"><span class="legend-dot inhand-dot"></span> Net In-Hand (<strong id="legend-inhand-pct">89.4%</strong>)</span>
+                  <span class="legend-item"><span class="legend-dot indiatax-dot"></span> Indian Income Tax (<strong id="legend-indiatax-pct">9.9%</strong>)</span>
+                  <span class="legend-item"><span class="legend-dot ustax-dot"></span> US Withholding Tax (<strong id="legend-ustax-pct">0.7%</strong>)</span>
+                </div>
+              </div>
+
+              <!-- Step-by-Step Waterfall Deduction Table -->
+              <div class="table-responsive" style="margin-top: 1.5rem;">
+                <table class="data-table waterfall-table" id="table-india-waterfall">
+                  <thead>
+                    <tr>
+                      <th>Financial Step / Component</th>
+                      <th>Tax Basis / Authority</th>
+                      <th>Monthly (USD)</th>
+                      <th>Monthly (INR ₹)</th>
+                      <th>Annual Total (INR ₹)</th>
+                      <th>Status / Explanation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Indian Creator Tax Filing Pro-Tips -->
+              <div class="india-tax-tips-card">
+                <div class="tips-header">
+                  <span class="tips-icon">💡</span>
+                  <h4>Key Indian Tax & Compliance Rules for YouTubers</h4>
+                </div>
+                <div class="tips-grid">
+                  <div class="tip-box">
+                    <strong>1. Section 44ADA (50% Flat Expense Deduction)</strong>
+                    <p>Under Indian Income Tax Section 44ADA, freelancers and online creators with gross turnover up to ₹75 Lakhs only need to pay tax on <strong>50% of gross receipts</strong>. The other 50% is automatically treated as deductible business expenses (camera gear, software, editing, studio, broadband) without submitting bills!</p>
+                  </div>
+                  <div class="tip-box">
+                    <strong>2. Zero GST with LUT (Export of Services)</strong>
+                    <p>YouTube payments from Google Ireland / Google LLC are classified as <strong>"Export of Services"</strong>. By filing a free <strong>Letter of Undertaking (LUT)</strong> on the GST portal, Indian YouTubers pay <strong>0% GST</strong> legally even if turnover exceeds ₹20 Lakhs.</p>
+                  </div>
+                  <div class="tip-box">
+                    <strong>3. US Tax W-8BEN & Foreign Tax Credit (FTC)</strong>
+                    <p>Because India has a Double Taxation Avoidance Agreement (DTAA) with the US, submitting Form W-8BEN caps US withholding at <strong>15% on US views only</strong> (instead of 30%). You can file <strong>Form 67</strong> with your Indian ITR to claim this as a tax credit!</p>
+                  </div>
+                  <div class="tip-box">
+                    <strong>4. Advance Tax Deadlines</strong>
+                    <p>If your annual tax liability exceeds ₹10,000, you must pay Advance Tax in 4 quarterly installments (June 15, Sept 15, Dec 15, March 15) to avoid interest penalties under Sections 234B & 234C.</p>
+                  </div>
                 </div>
               </div>
             </div>

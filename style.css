@@ -2938,6 +2938,410 @@ body {
 }
 
 /* ==========================================================================
+   India Tax & Dollar-to-INR Conversion Engine Styles
+   ========================================================================== */
+
+.highlight-tab-inr {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.15), rgba(16, 185, 129, 0.15)) !important;
+  border-color: rgba(249, 115, 22, 0.4) !important;
+  color: #fed7aa !important;
+  font-weight: 700 !important;
+}
+
+.highlight-tab-inr:hover {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.25), rgba(16, 185, 129, 0.25)) !important;
+  border-color: #f97316 !important;
+  color: #fff !important;
+}
+
+.highlight-tab-inr.active {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.35), rgba(16, 185, 129, 0.35)) !important;
+  border-color: #f97316 !important;
+  color: #fff !important;
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.35) !important;
+}
+
+/* Dual-currency preview on main reality card */
+.reality-inr-preview {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 0.85rem 0;
+  padding: 0.5rem 0.85rem;
+  background: rgba(249, 115, 22, 0.08);
+  border: 1px solid rgba(249, 115, 22, 0.3);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+}
+
+.reality-inr-preview .inr-tag {
+  color: #fed7aa;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+}
+
+.reality-inr-preview strong {
+  color: #fdba74;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+}
+
+.reality-inr-preview .inr-net-tag {
+  color: #94a3b8;
+  font-size: 0.78rem;
+}
+
+.reality-inr-preview .inr-net-tag strong {
+  color: #34d399;
+}
+
+/* India Tax Interactive Controls Bar */
+.india-tax-controls-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  margin-bottom: 1.5rem;
+}
+
+.tax-control-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.control-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tax-field-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #cbd5e1;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.fx-rate-badge {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.fx-slider-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.input-with-symbol {
+  display: flex;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 0 0.5rem;
+  min-width: 90px;
+}
+
+.input-with-symbol .currency-prefix {
+  font-weight: 700;
+  color: #94a3b8;
+  font-size: 0.85rem;
+}
+
+.text-input-sm {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 600;
+  width: 60px;
+  padding: 0.35rem 0.25rem;
+  outline: none;
+}
+
+.tax-select {
+  width: 100%;
+  font-size: 0.82rem;
+  padding: 0.6rem 0.85rem;
+  background: rgba(15, 23, 42, 0.9);
+}
+
+.flat-tax-slider-wrap {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-sm);
+}
+
+.tax-toggle-col {
+  justify-content: center;
+  gap: 0.65rem;
+}
+
+.toggle-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.toggle-checkbox-label input[type="checkbox"] {
+  accent-color: #f97316;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* India Payout 4 Hero Cards */
+.india-payout-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inr-card {
+  padding: 1.25rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.inr-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.inr-card-primary {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(15, 23, 42, 0.9));
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.15);
+}
+
+.inr-card-subtitle {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #94a3b8;
+  letter-spacing: 0.05em;
+}
+
+.inr-card-main-val {
+  font-family: var(--font-heading);
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.inr-card-main-val .unit {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.inr-card-lakhs {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.inr-card-status-badge {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-sm);
+  width: fit-content;
+}
+
+.badge-green {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.badge-blue {
+  background: rgba(56, 189, 248, 0.15);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+
+.badge-rose {
+  background: rgba(244, 63, 94, 0.15);
+  color: #fda4af;
+  border: 1px solid rgba(244, 63, 94, 0.3);
+}
+
+.badge-amber {
+  background: rgba(245, 158, 11, 0.15);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* Visual Payout Allocation Bar */
+.payout-distribution-visual {
+  background: rgba(15, 23, 42, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.payout-bar-track {
+  display: flex;
+  height: 16px;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-bottom: 0.75rem;
+}
+
+.payout-bar-seg {
+  height: 100%;
+  transition: width 0.4s ease;
+}
+
+.seg-inhand { background: linear-gradient(90deg, #10b981, #34d399); }
+.seg-indiatax { background: linear-gradient(90deg, #f97316, #fb923c); }
+.seg-ustax { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+
+.payout-bar-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.inhand-dot { background: #10b981; }
+.indiatax-dot { background: #f97316; }
+.ustax-dot { background: #3b82f6; }
+
+/* Waterfall Table Styling */
+.waterfall-table th {
+  background: rgba(30, 41, 59, 0.75);
+}
+
+.final-inhand-row td {
+  background: rgba(16, 185, 129, 0.12) !important;
+  border-top: 2px solid #10b981 !important;
+  border-bottom: 2px solid #10b981 !important;
+}
+
+.final-inhand-row td strong {
+  font-size: 1.05rem;
+}
+
+.auth-pill {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+}
+
+.table-sub-desc {
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.35;
+}
+
+/* Indian Creator Tax Tips Card */
+.india-tax-tips-card {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(249, 115, 22, 0.25);
+  border-radius: var(--radius-lg);
+}
+
+.tips-header {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.tips-icon {
+  font-size: 1.5rem;
+}
+
+.tips-header h4 {
+  margin: 0;
+  color: #fdba74;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+}
+
+.tips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.tip-box {
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+
+.tip-box strong {
+  display: block;
+  color: #fff;
+  font-size: 0.85rem;
+  margin-bottom: 0.4rem;
+}
+
+.tip-box p {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  line-height: 1.45;
+}
+
+.tip-box p strong {
+  display: inline;
+  color: #fed7aa;
+}
+
+/* ==========================================================================
    Print / Export Report Styles
    ========================================================================== */
 

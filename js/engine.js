@@ -323,4 +323,164 @@ export class RevenueEngine {
       months
     };
   }
+
+  /**
+   * Calculate Dollar Conversion & Indian Income Tax (ITR Slabs + 44ADA + US W-8BEN Withholding)
+   */
+  calculateIndiaTax({
+    monthlyGrossUsd = 0,
+    usTrafficSharePercent = 0,
+    exchangeRate = 84.00,
+    regime = '44ada',
+    flatPercent = 20,
+    hasW8Ben = true
+  }) {
+    const rate = Math.max(1, Number(exchangeRate) || 84.00);
+    const monthlyGrossInr = monthlyGrossUsd * rate;
+    const annualGrossInr = monthlyGrossInr * 12;
+    const annualGrossUsd = monthlyGrossUsd * 12;
+
+    // 1. US Withholding Tax (W-8BEN Treaty under Article 12)
+    // Applied ONLY to earnings from viewers located in the United States
+    const usEarningsMonthlyUsd = monthlyGrossUsd * ((Number(usTrafficSharePercent) || 0) / 100);
+    const usTaxRate = hasW8Ben ? 0.15 : 0.30;
+    const usWithholdingMonthlyUsd = usEarningsMonthlyUsd * usTaxRate;
+    const usWithholdingMonthlyInr = usWithholdingMonthlyUsd * rate;
+    const usWithholdingAnnualInr = usWithholdingMonthlyInr * 12;
+
+    // 2. Indian Income Tax Computation (Annual Basis)
+    let taxableIncomeAnnualInr = 0;
+    let businessExpensesAllowedInr = 0;
+    let baseTaxAnnualInr = 0;
+    let isRebateApplied = false;
+
+    if (regime === '44ada') {
+      // Section 44ADA Presumptive Taxation Scheme: 50% of gross receipts considered business expenses
+      businessExpensesAllowedInr = annualGrossInr * 0.50;
+      taxableIncomeAnnualInr = annualGrossInr * 0.50;
+    } else if (regime === 'flat') {
+      businessExpensesAllowedInr = 0;
+      taxableIncomeAnnualInr = annualGrossInr;
+      baseTaxAnnualInr = annualGrossInr * ((Number(flatPercent) || 20) / 100);
+    } else {
+      // Standard Slabs (New Tax Regime with standard deduction of ₹75,000 for FY 2024-25 / FY 2025-26)
+      businessExpensesAllowedInr = Math.min(annualGrossInr, 75000);
+      taxableIncomeAnnualInr = Math.max(0, annualGrossInr - 75000);
+    }
+
+    // Compute slabs if not flat
+    const slabBreakdown = [];
+    if (regime !== 'flat') {
+      if (taxableIncomeAnnualInr <= 700000) {
+        // Section 87A rebate: 100% tax rebate if taxable income <= ₹7,00,000 under New Tax Regime
+        baseTaxAnnualInr = 0;
+        isRebateApplied = taxableIncomeAnnualInr > 0;
+        slabBreakdown.push({ slab: 'Up to ₹7,00,000', taxable: taxableIncomeAnnualInr, rate: '0% (Sec 87A Full Rebate)', tax: 0 });
+      } else {
+        // Slabs:
+        // 0 to 3L: 0%
+        // 3L to 7L: 5% (max 20,000)
+        // 7L to 10L: 10% (max 30,000)
+        // 10L to 12L: 15% (max 30,000)
+        // 12L to 15L: 20% (max 60,000)
+        // > 15L: 30%
+        let rem = taxableIncomeAnnualInr;
+
+        // 0 - 3L
+        const s1 = Math.min(rem, 300000);
+        slabBreakdown.push({ slab: 'Up to ₹3,00,000', taxable: s1, rate: '0%', tax: 0 });
+        rem = Math.max(0, rem - 300000);
+
+        // 3L - 7L (4L window)
+        const s2 = Math.min(rem, 400000);
+        const t2 = s2 * 0.05;
+        baseTaxAnnualInr += t2;
+        if (s2 > 0) slabBreakdown.push({ slab: '₹3,00,001 – ₹7,00,000', taxable: s2, rate: '5%', tax: t2 });
+        rem = Math.max(0, rem - 400000);
+
+        // 7L - 10L (3L window)
+        const s3 = Math.min(rem, 300000);
+        const t3 = s3 * 0.10;
+        baseTaxAnnualInr += t3;
+        if (s3 > 0) slabBreakdown.push({ slab: '₹7,00,001 – ₹10,00,000', taxable: s3, rate: '10%', tax: t3 });
+        rem = Math.max(0, rem - 300000);
+
+        // 10L - 12L (2L window)
+        const s4 = Math.min(rem, 200000);
+        const t4 = s4 * 0.15;
+        baseTaxAnnualInr += t4;
+        if (s4 > 0) slabBreakdown.push({ slab: '₹10,00,001 – ₹12,00,000', taxable: s4, rate: '15%', tax: t4 });
+        rem = Math.max(0, rem - 200000);
+
+        // 12L - 15L (3L window)
+        const s5 = Math.min(rem, 300000);
+        const t5 = s5 * 0.20;
+        baseTaxAnnualInr += t5;
+        if (s5 > 0) slabBreakdown.push({ slab: '₹12,00,001 – ₹15,00,000', taxable: s5, rate: '20%', tax: t5 });
+        rem = Math.max(0, rem - 300000);
+
+        // Above 15L
+        if (rem > 0) {
+          const t6 = rem * 0.30;
+          baseTaxAnnualInr += t6;
+          slabBreakdown.push({ slab: 'Above ₹15,00,000', taxable: rem, rate: '30%', tax: t6 });
+        }
+      }
+    }
+
+    // 3. Surcharge on Ultra-High Income (> ₹50 Lakhs)
+    let surchargeAnnualInr = 0;
+    if (taxableIncomeAnnualInr > 20000000) {
+      surchargeAnnualInr = baseTaxAnnualInr * 0.25;
+    } else if (taxableIncomeAnnualInr > 10000000) {
+      surchargeAnnualInr = baseTaxAnnualInr * 0.15;
+    } else if (taxableIncomeAnnualInr > 5000000) {
+      surchargeAnnualInr = baseTaxAnnualInr * 0.10;
+    }
+
+    // 4. Health & Education Cess (4% on Tax + Surcharge)
+    const cessAnnualInr = (baseTaxAnnualInr + surchargeAnnualInr) * 0.04;
+    const indianIncomeTaxAnnualInr = baseTaxAnnualInr + surchargeAnnualInr + cessAnnualInr;
+    const indianIncomeTaxMonthlyInr = indianIncomeTaxAnnualInr / 12;
+
+    // 5. Total Combined Deductions & Final In-Hand
+    const totalDeductionsMonthlyInr = usWithholdingMonthlyInr + indianIncomeTaxMonthlyInr;
+    const totalDeductionsAnnualInr = usWithholdingAnnualInr + indianIncomeTaxAnnualInr;
+
+    const netInHandMonthlyInr = Math.max(0, monthlyGrossInr - totalDeductionsMonthlyInr);
+    const netInHandAnnualInr = Math.max(0, annualGrossInr - totalDeductionsAnnualInr);
+
+    const effectiveTaxRatePercent = annualGrossInr > 0 
+      ? (totalDeductionsAnnualInr / annualGrossInr) * 100 
+      : 0;
+
+    return {
+      exchangeRate: rate,
+      grossMonthlyUsd,
+      grossAnnualUsd,
+      grossMonthlyInr,
+      annualGrossInr,
+      usTrafficSharePercent,
+      usEarningsMonthlyUsd,
+      usWithholdingMonthlyUsd,
+      usWithholdingMonthlyInr,
+      usWithholdingAnnualInr,
+      usTaxRatePercent: Math.round(usTaxRate * 100),
+      businessExpensesAllowedInr,
+      taxableIncomeAnnualInr,
+      isRebateApplied,
+      baseTaxAnnualInr,
+      surchargeAnnualInr,
+      cessAnnualInr,
+      indianIncomeTaxAnnualInr,
+      indianIncomeTaxMonthlyInr,
+      totalDeductionsMonthlyInr,
+      totalDeductionsAnnualInr,
+      netInHandMonthlyInr,
+      netInHandAnnualInr,
+      effectiveTaxRatePercent,
+      slabBreakdown,
+      regime
+    };
+  }
 }

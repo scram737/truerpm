@@ -54,7 +54,13 @@ class TrueRpmApp {
       channelAgeMonths: 66,
       joinedDate: 'Apr 16, 2021',
       viewScopeMode: 'this-month',
-      dividePeriodMonths: '12'
+      dividePeriodMonths: '12',
+      // India Tax & FX Conversion State
+      exchangeRate: 84.00,
+      indiaTaxRegime: '44ada',
+      indiaFlatTaxPercent: 20,
+      hasW8Ben: true,
+      useLakhsFormat: true
     };
 
     this.initElements();
@@ -243,6 +249,41 @@ class TrueRpmApp {
     this.dividePeriodButtons = document.querySelectorAll('.divide-period-btn');
     this.dispCalcDividedViews = document.getElementById('disp-calc-divided-views');
     this.btnApplyDividedViews = document.getElementById('btn-apply-divided-views');
+
+    // Tab 5 India Tax & USD/INR Conversion Elements
+    this.sliderExchangeRate = document.getElementById('slider-exchange-rate');
+    this.inputExchangeRate = document.getElementById('input-exchange-rate');
+    this.dispFxRateBadge = document.getElementById('disp-fx-rate-badge');
+    this.selectTaxRegime = document.getElementById('select-tax-regime');
+    this.wrapFlatTax = document.getElementById('wrap-flat-tax');
+    this.sliderFlatTax = document.getElementById('slider-flat-tax');
+    this.dispFlatTaxVal = document.getElementById('disp-flat-tax-val');
+    this.checkW8Ben = document.getElementById('check-w8ben');
+    this.checkLakhsFormat = document.getElementById('check-lakhs-format');
+
+    this.dispInrNetMonthly = document.getElementById('disp-inr-net-monthly');
+    this.dispInrNetMonthlyLakhs = document.getElementById('disp-inr-net-monthly-lakhs');
+    this.dispInrNetAnnual = document.getElementById('disp-inr-net-annual');
+    this.dispInrNetAnnualLakhs = document.getElementById('disp-inr-net-annual-lakhs');
+    this.dispInrTotalTax = document.getElementById('disp-inr-total-tax');
+    this.dispInrEffectiveRate = document.getElementById('disp-inr-effective-rate');
+    this.dispInrGrossMonthly = document.getElementById('disp-inr-gross-monthly');
+    this.dispInrGrossUsdNote = document.getElementById('disp-inr-gross-usd-note');
+
+    this.barSegInhand = document.getElementById('bar-seg-inhand');
+    this.barSegIndiatax = document.getElementById('bar-seg-indiatax');
+    this.barSegUstax = document.getElementById('bar-seg-ustax');
+    this.legendInhandPct = document.getElementById('legend-inhand-pct');
+    this.legendIndiataxPct = document.getElementById('legend-indiatax-pct');
+    this.legendUstaxPct = document.getElementById('legend-ustax-pct');
+
+    this.tableIndiaWaterfall = document.getElementById('table-india-waterfall')?.querySelector('tbody');
+
+    // Dual currency preview on main reality card
+    this.dispRealityInrPreview = document.getElementById('disp-reality-inr-preview');
+    this.dispRealityInrVal = document.getElementById('disp-reality-inr-val');
+    this.dispRealityInrNet = document.getElementById('disp-reality-inr-net');
+    this.dispRealityInrNetVal = document.getElementById('disp-reality-inr-net-val');
   }
 
   setupEventListeners() {
@@ -427,6 +468,84 @@ class TrueRpmApp {
     if (this.btnApplyDividedViews) {
       this.btnApplyDividedViews.addEventListener('click', () => this.applyDividedModalResult());
     }
+
+    // India Tax & FX Conversion Event Listeners
+    if (this.sliderExchangeRate) {
+      this.sliderExchangeRate.addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value) || 84.00;
+        this.state.exchangeRate = val;
+        CURRENCIES.INR.rate = val;
+        if (this.inputExchangeRate) this.inputExchangeRate.value = val.toFixed(2);
+        if (this.dispFxRateBadge) this.dispFxRateBadge.textContent = `1 USD = ₹${val.toFixed(2)}`;
+        this.updateUI();
+      });
+    }
+
+    if (this.inputExchangeRate) {
+      this.inputExchangeRate.addEventListener('input', (e) => {
+        const val = Math.max(1, parseFloat(e.target.value) || 84.00);
+        this.state.exchangeRate = val;
+        CURRENCIES.INR.rate = val;
+        if (this.sliderExchangeRate) this.sliderExchangeRate.value = Math.min(90, Math.max(80, val));
+        if (this.dispFxRateBadge) this.dispFxRateBadge.textContent = `1 USD = ₹${val.toFixed(2)}`;
+        this.updateUI();
+      });
+    }
+
+    if (this.selectTaxRegime) {
+      this.selectTaxRegime.addEventListener('change', (e) => {
+        this.state.indiaTaxRegime = e.target.value;
+        if (this.wrapFlatTax) {
+          this.wrapFlatTax.style.display = this.state.indiaTaxRegime === 'flat' ? 'block' : 'none';
+        }
+        this.updateUI();
+      });
+    }
+
+    if (this.sliderFlatTax) {
+      this.sliderFlatTax.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10) || 20;
+        this.state.indiaFlatTaxPercent = val;
+        if (this.dispFlatTaxVal) this.dispFlatTaxVal.textContent = `${val}%`;
+        this.updateUI();
+      });
+    }
+
+    if (this.checkW8Ben) {
+      this.checkW8Ben.addEventListener('change', (e) => {
+        this.state.hasW8Ben = e.target.checked;
+        this.updateUI();
+      });
+    }
+
+    if (this.checkLakhsFormat) {
+      this.checkLakhsFormat.addEventListener('change', (e) => {
+        this.state.useLakhsFormat = e.target.checked;
+        this.updateUI();
+      });
+    }
+  }
+
+  formatInr(amount, includeSymbol = true) {
+    const rounded = Math.round(Number(amount) || 0);
+    const formatted = rounded.toLocaleString('en-IN');
+    return includeSymbol ? `₹${formatted}` : formatted;
+  }
+
+  formatInrLakhs(amount) {
+    const val = Number(amount) || 0;
+    const absVal = Math.abs(val);
+    const sign = val < 0 ? '-' : '';
+    if (absVal >= 10000000) {
+      return `${sign}₹${(absVal / 10000000).toFixed(2)} Cr`;
+    }
+    if (absVal >= 100000) {
+      return `${sign}₹${(absVal / 100000).toFixed(2)} Lakhs`;
+    }
+    if (absVal >= 1000) {
+      return `${sign}₹${(absVal / 1000).toFixed(1)}K`;
+    }
+    return `${sign}₹${Math.round(absVal).toLocaleString('en-IN')}`;
   }
 
   // Format currency helpers
@@ -852,6 +971,29 @@ class TrueRpmApp {
     const monthlyDivision = this.engine.generateMonthlyDivision(results, currentMonthIndex);
     this.renderMonthlyDivisionTab(monthlyDivision);
     this.updateViewsScopeUI();
+
+    // 9. Update India Dollar Conversion & Income Tax Calculator
+    const usTraffic = this.state.traffic.find(t => t.code === 'US');
+    const usTrafficSharePercent = usTraffic ? Number(usTraffic.share) || 0 : 0;
+
+    const indiaTaxResults = this.engine.calculateIndiaTax({
+      monthlyGrossUsd: this.state.isMonetized ? results.earnings.monthlyAdSense : 0,
+      usTrafficSharePercent,
+      exchangeRate: this.state.exchangeRate,
+      regime: this.state.indiaTaxRegime,
+      flatPercent: this.state.indiaFlatTaxPercent,
+      hasW8Ben: this.state.hasW8Ben
+    });
+
+    // Dual currency preview on Reality Battlefield card
+    if (this.dispRealityInrVal) {
+      this.dispRealityInrVal.textContent = `${this.formatInr(indiaTaxResults.grossMonthlyInr)} /mo`;
+    }
+    if (this.dispRealityInrNetVal) {
+      this.dispRealityInrNetVal.textContent = `${this.formatInr(indiaTaxResults.netInHandMonthlyInr)} /mo`;
+    }
+
+    this.renderIndiaTaxTab(results, indiaTaxResults);
   }
 
   renderTrafficMultiBar(countryList) {
@@ -1445,6 +1587,166 @@ class TrueRpmApp {
       `;
       this.tableMonthlyDivision.appendChild(tr);
     });
+  }
+
+  renderIndiaTaxTab(results, tax) {
+    if (!this.dispInrNetMonthly) return;
+
+    // 1. Hero Metric Cards
+    this.dispInrNetMonthly.innerHTML = `${this.formatInr(tax.netInHandMonthlyInr)} <span class="unit">/mo</span>`;
+    if (this.dispInrNetMonthlyLakhs) {
+      this.dispInrNetMonthlyLakhs.textContent = this.state.useLakhsFormat 
+        ? `≈ ${this.formatInrLakhs(tax.netInHandMonthlyInr)} / month` 
+        : `(${this.formatInr(tax.netInHandMonthlyInr)} per month)`;
+    }
+
+    if (this.dispInrNetAnnual) {
+      this.dispInrNetAnnual.innerHTML = `${this.formatInr(tax.netInHandAnnualInr)} <span class="unit">/yr</span>`;
+    }
+    if (this.dispInrNetAnnualLakhs) {
+      this.dispInrNetAnnualLakhs.textContent = this.state.useLakhsFormat 
+        ? `≈ ${this.formatInrLakhs(tax.netInHandAnnualInr)} / year` 
+        : `(${this.formatInr(tax.netInHandAnnualInr)} per year)`;
+    }
+
+    if (this.dispInrTotalTax) {
+      this.dispInrTotalTax.innerHTML = `- ${this.formatInr(tax.totalDeductionsMonthlyInr)} <span class="unit">/mo</span>`;
+    }
+    if (this.dispInrEffectiveRate) {
+      this.dispInrEffectiveRate.textContent = `Effective Total Tax Rate: ${tax.effectiveTaxRatePercent.toFixed(1)}%`;
+    }
+
+    if (this.dispInrGrossMonthly) {
+      this.dispInrGrossMonthly.innerHTML = `${this.formatInr(tax.grossMonthlyInr)} <span class="unit">/mo</span>`;
+    }
+    if (this.dispInrGrossUsdNote) {
+      this.dispInrGrossUsdNote.textContent = `$${Math.round(tax.grossMonthlyUsd).toLocaleString()} USD @ ₹${tax.exchangeRate.toFixed(2)}/$`;
+    }
+
+    // 2. Visual Distribution Bar
+    const gross = tax.grossMonthlyInr;
+    let inhandPct = 100;
+    let indiataxPct = 0;
+    let ustaxPct = 0;
+
+    if (gross > 0) {
+      inhandPct = Math.max(0, Math.min(100, (tax.netInHandMonthlyInr / gross) * 100));
+      indiataxPct = Math.max(0, Math.min(100, (tax.indianIncomeTaxMonthlyInr / gross) * 100));
+      ustaxPct = Math.max(0, Math.min(100, (tax.usWithholdingMonthlyInr / gross) * 100));
+    }
+
+    if (this.barSegInhand) this.barSegInhand.style.width = `${inhandPct.toFixed(1)}%`;
+    if (this.barSegIndiatax) this.barSegIndiatax.style.width = `${indiataxPct.toFixed(1)}%`;
+    if (this.barSegUstax) this.barSegUstax.style.width = `${ustaxPct.toFixed(1)}%`;
+
+    if (this.legendInhandPct) this.legendInhandPct.textContent = `${inhandPct.toFixed(1)}%`;
+    if (this.legendIndiataxPct) this.legendIndiataxPct.textContent = `${indiataxPct.toFixed(1)}%`;
+    if (this.legendUstaxPct) this.legendUstaxPct.textContent = `${ustaxPct.toFixed(1)}%`;
+
+    // 3. Step-by-Step Waterfall Deduction Table
+    if (this.tableIndiaWaterfall) {
+      this.tableIndiaWaterfall.innerHTML = '';
+
+      const netRemittanceUsd = Math.max(0, tax.grossMonthlyUsd - tax.usWithholdingMonthlyUsd);
+      const netRemittanceInr = Math.max(0, tax.grossMonthlyInr - tax.usWithholdingMonthlyInr);
+      const netRemittanceAnnualInr = Math.max(0, tax.annualGrossInr - tax.usWithholdingAnnualInr);
+
+      const rows = [
+        {
+          step: '1. Gross YouTube AdSense',
+          desc: 'Total estimated monthly AdSense before international taxes',
+          auth: 'Google LLC / Ireland',
+          usd: `$${Math.round(tax.grossMonthlyUsd).toLocaleString()}`,
+          inrMonth: this.formatInr(tax.grossMonthlyInr),
+          inrYear: this.formatInr(tax.annualGrossInr),
+          status: '<span class="tier-pill tier-1a">Pre-Tax Earnings</span>',
+          rowClass: ''
+        },
+        {
+          step: '2. US Withholding Tax (W-8BEN)',
+          desc: `${tax.usTaxRatePercent}% treaty withholding on ${tax.usTrafficSharePercent}% US viewers (DTAA Article 12)`,
+          auth: 'US IRS',
+          usd: tax.usWithholdingMonthlyUsd > 0 ? `-$${Math.round(tax.usWithholdingMonthlyUsd).toLocaleString()}` : '$0',
+          inrMonth: tax.usWithholdingMonthlyInr > 0 ? `-${this.formatInr(tax.usWithholdingMonthlyInr)}` : '₹0',
+          inrYear: tax.usWithholdingAnnualInr > 0 ? `-${this.formatInr(tax.usWithholdingAnnualInr)}` : '₹0',
+          status: tax.usWithholdingMonthlyInr > 0 ? '<span class="tier-pill tier-3" title="Claim Foreign Tax Credit in ITR">Claim FTC Form 67</span>' : '<span class="tier-pill tier-1b">No US Traffic</span>',
+          rowClass: ''
+        },
+        {
+          step: '3. Foreign Remittance Credited',
+          desc: 'Wire transfer arriving in Indian bank account (Export of Services, 0% GST with LUT)',
+          auth: 'RBI / Bank FIRC',
+          usd: `$${Math.round(netRemittanceUsd).toLocaleString()}`,
+          inrMonth: `<strong>${this.formatInr(netRemittanceInr)}</strong>`,
+          inrYear: `<strong>${this.formatInr(netRemittanceAnnualInr)}</strong>`,
+          status: '<span class="tier-pill tier-1b">0% GST with LUT</span>',
+          rowClass: ''
+        },
+        {
+          step: '4. Business Expense Allowance',
+          desc: tax.regime === '44ada' 
+            ? 'Section 44ADA presumptive 50% flat expense allowance (no bills needed)' 
+            : (tax.regime === 'new_regime' ? 'Standard Deduction ₹75,000 under New Tax Regime' : 'Flat tax computation'),
+          auth: 'IT Act 1961',
+          usd: '—',
+          inrMonth: tax.businessExpensesAllowedInr > 0 ? `-${this.formatInr(tax.businessExpensesAllowedInr / 12)}` : '₹0',
+          inrYear: tax.businessExpensesAllowedInr > 0 ? `-${this.formatInr(tax.businessExpensesAllowedInr)}` : '₹0',
+          status: `<span class="tier-pill tier-2">${tax.regime === '44ada' ? '50% Deductible' : 'Standard'}</span>`,
+          rowClass: ''
+        },
+        {
+          step: '5. Net Indian Taxable Income',
+          desc: 'Net income basis subject to Indian Income Tax assessment slabs',
+          auth: 'IT Dept Slabs',
+          usd: '—',
+          inrMonth: this.formatInr(tax.taxableIncomeAnnualInr / 12),
+          inrYear: `<strong>${this.formatInr(tax.taxableIncomeAnnualInr)}</strong>`,
+          status: `<span class="tier-pill ${tax.isRebateApplied ? 'tier-1a' : 'tier-2'}">${tax.isRebateApplied ? 'Sec 87A Zero Tax Rebate' : 'Taxable Income'}</span>`,
+          rowClass: ''
+        },
+        {
+          step: '6. Indian Income Tax & 4% Cess',
+          desc: tax.isRebateApplied 
+            ? '100% tax rebate under Section 87A (Taxable income ≤ ₹7,00,000)' 
+            : `Base Tax: ${this.formatInr(tax.baseTaxAnnualInr)}${tax.surchargeAnnualInr > 0 ? ` + Surcharge: ${this.formatInr(tax.surchargeAnnualInr)}` : ''} + 4% Cess: ${this.formatInr(tax.cessAnnualInr)}`,
+          auth: 'ITR-4 / ITR-3',
+          usd: '—',
+          inrMonth: tax.indianIncomeTaxMonthlyInr > 0 ? `<span style="color:#f87171;">-${this.formatInr(tax.indianIncomeTaxMonthlyInr)}</span>` : '<span style="color:#34d399;">₹0 (Rebate)</span>',
+          inrYear: tax.indianIncomeTaxAnnualInr > 0 ? `<span style="color:#f87171;">-${this.formatInr(tax.indianIncomeTaxAnnualInr)}</span>` : '<span style="color:#34d399;">₹0 (Rebate)</span>',
+          status: tax.isRebateApplied 
+            ? '<span class="tier-pill tier-1a">Sec 87A Full Rebate</span>' 
+            : '<span class="tier-pill tier-3">Advance Tax Due</span>',
+          rowClass: ''
+        },
+        {
+          step: '7. 💰 FINAL NET IN-HAND PAYOUT',
+          desc: 'Actual disposable money credited into your Indian bank account after all taxes',
+          auth: 'Indian Bank',
+          usd: `<strong>$${Math.round(tax.netInHandMonthlyInr / tax.exchangeRate).toLocaleString()}</strong>`,
+          inrMonth: `<strong class="highlight-emerald" style="font-size:1.15rem;">${this.formatInr(tax.netInHandMonthlyInr)} /mo</strong>`,
+          inrYear: `<strong class="highlight-emerald" style="font-size:1.15rem;">${this.formatInr(tax.netInHandAnnualInr)} /yr</strong>`,
+          status: '<span class="tier-pill tier-1a" style="background:#059669; color:#fff;">Net In-Hand Pocket</span>',
+          rowClass: 'final-inhand-row'
+        }
+      ];
+
+      rows.forEach(r => {
+        const tr = document.createElement('tr');
+        if (r.rowClass) tr.className = r.rowClass;
+        tr.innerHTML = `
+          <td>
+            <strong>${r.step}</strong>
+            <div class="table-sub-desc">${r.desc}</div>
+          </td>
+          <td><span class="auth-pill">${r.auth}</span></td>
+          <td>${r.usd}</td>
+          <td>${r.inrMonth}</td>
+          <td>${r.inrYear}</td>
+          <td>${r.status}</td>
+        `;
+        this.tableIndiaWaterfall.appendChild(tr);
+      });
+    }
   }
 }
 
