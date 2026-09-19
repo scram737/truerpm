@@ -296,7 +296,13 @@ def fetch_youtube_channel_live(query):
         except Exception:
             pass
 
-    has_join = "sponsorButton" in raw_str or "membership" in raw_str.lower()
+    has_join = bool(
+        '"text":"Join"' in html or 
+        '"text": {"content": "Join"}' in html or 
+        '"text":{"content":"Join"}' in html or 
+        'sponsorshipsOfferRenderer' in raw_str or 
+        'sponsorButton' in raw_str
+    )
     has_monetization_tag = '"is_monetization_enabled":true' in raw_str or '"is_monetization_enabled","value":"true"' in raw_str
 
     if has_monetization_tag or has_ads or has_join:
@@ -574,7 +580,8 @@ def fetch_youtube_channel_live(query):
         "sampledShortsViews": sampled_shorts_views,
         "isMonetized": is_monetized,
         "monetizationTier": "YPP_ACTIVE" if is_monetized else "UNMONETIZED",
-        "monetizationReason": monetization_reason
+        "monetizationReason": monetization_reason,
+        "hasJoinButton": has_join
     }
 
 class TrueRPMHandler(http.server.SimpleHTTPRequestHandler):

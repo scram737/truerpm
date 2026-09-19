@@ -52,7 +52,10 @@ export class RevenueEngine {
     durationId = 'mid_video',
     traffic = [{ code: 'US', share: 100 }],
     isMonetized = true,
-    adblockPercent = 25
+    adblockPercent = 25,
+    subscribers = 100000,
+    hasJoinButton = false,
+    countryCode = 'US'
   }) {
     // 1. Normalize traffic shares so they sum to 100
     const rawTotalShare = traffic.reduce((acc, t) => acc + (Number(t.share) || 0), 0) || 100;
@@ -160,10 +163,22 @@ export class RevenueEngine {
       ? (totalSponsorReachValue * 0.35 * Math.min(2.5, niche.multiplier))
       : 0;
 
-    // Channel Memberships & Superchats (fan funding): driven by audience affinity & purchasing power (requires YPP or external platforms)
-    const fanFundingMonthly = isMonetized 
-      ? potentialTotalAdSense * 0.12 * (tier1Views / monthlyViews * 1.5 + tier2Views / monthlyViews * 0.6 + tier3Views / monthlyViews * 0.15)
+    // Channel Memberships (Join Button Perks):
+    // 0.1% of subscribers join for perks ONLY IF Join button is enabled on YouTube
+    const isIndiaChannel = (countryCode === 'IN') || (traffic && traffic[0]?.code === 'IN');
+    const membershipTierPriceUsd = isIndiaChannel ? 1.06 : 2.99; // ₹89/mo in India (~$1.06), $2.99/mo standard global
+    const membershipTierPriceInr = 89;
+    const paidMembersCount = (isMonetized && hasJoinButton) ? Math.round(subscribers * 0.001) : 0;
+    const membershipsMonthlyGrossUsd = paidMembersCount * membershipTierPriceUsd;
+    // YouTube takes 30% cut on Channel Memberships (Creator receives 70% net payout)
+    const membershipsMonthlyNetUsd = membershipsMonthlyGrossUsd * 0.70;
+
+    // Fan Funding (SuperChats / SuperThanks during live streams & uploads)
+    const superChatsMonthly = isMonetized 
+      ? (monthlyTotalAdSense * 0.04 * (tier1Views / monthlyViews * 1.5 + tier2Views / monthlyViews * 0.6 + tier3Views / monthlyViews * 0.2))
       : 0;
+
+    const fanFundingMonthly = membershipsMonthlyNetUsd + superChatsMonthly;
 
     // Affiliate / Merch: can work even if unmonetized!
     const affiliateMonthly = (potentialTotalAdSense > 0 ? potentialTotalAdSense : 500) * (niche.id === 'tech' || niche.id === 'finance' || niche.id === 'automotive' ? 0.25 : 0.06);
@@ -209,10 +224,20 @@ export class RevenueEngine {
         tier1SharePercent: Math.round((tier1Views / monthlyViews) * 100),
         tier2SharePercent: Math.round((tier2Views / monthlyViews) * 100),
         tier3SharePercent: Math.round((tier3Views / monthlyViews) * 100),
-        isMonetized
+        isMonetized,
+        hasJoinButton,
+        paidMembersCount
       },
       earnings: {
         isMonetized,
+        hasJoinButton,
+        subscribers,
+        paidMembersCount,
+        membershipTierPriceUsd,
+        membershipTierPriceInr,
+        membershipsMonthlyGrossUsd,
+        membershipsMonthlyNetUsd,
+        superChatsMonthly,
         monthlyAdSense: monthlyTotalAdSense,
         potentialMonthlyAdSense: potentialTotalAdSense,
         monthlyAdSenseMin,

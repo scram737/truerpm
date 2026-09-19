@@ -337,6 +337,7 @@ export const VERIFIED_CHANNELS = [
     countryCode: 'IN',
     isMonetized: true,
     monetizationTier: 'YPP_ACTIVE',
+    hasJoinButton: false,
     monetizationReason: 'Verified YouTube Partner Program (YPP) active. 3.88 Billion lifetime views driven by viral Telugu comedy sketches & shorts (95% Shorts / 5% Long-form).',
     trafficDistribution: [
       { code: 'IN', share: 82 },
@@ -367,6 +368,7 @@ export const VERIFIED_CHANNELS = [
     countryCode: 'IN',
     isMonetized: true,
     monetizationTier: 'YPP_ACTIVE',
+    hasJoinButton: true,
     monetizationReason: 'Verified YouTube Partner Program (YPP) active. Middle Class Madhu animated comedy episodes (8-15 min mid-rolls) driving 1.70B lifetime views.',
     trafficDistribution: [
       { code: 'IN', share: 82 },
@@ -437,6 +439,7 @@ export const VERIFIED_CHANNELS = [
     countryCode: 'IN',
     isMonetized: true,
     monetizationTier: 'YPP_ACTIVE',
+    hasJoinButton: true,
     monetizationReason: 'YouTube Partner Program active. Majority revenue from long-form comedy videos and Tier-3 view auction',
     trafficDistribution: [
       { code: 'IN', share: 84 },

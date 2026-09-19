@@ -37,6 +37,7 @@ class TrueRpmApp {
       isMonetized: true,
       monetizationTier: 'YPP_ACTIVE',
       monetizationReason: 'YouTube Partner Program active. Majority revenue from long-form comedy videos and Tier-3 view auction',
+      hasJoinButton: true,
       traffic: [
         { code: 'IN', share: 84 },
         { code: 'PK', share: 6 },
@@ -101,6 +102,8 @@ class TrueRpmApp {
     this.profileOriginCountry = document.getElementById('profile-origin-country');
     this.profileFormatSplit = document.getElementById('profile-format-split');
     this.profileTopTraffic = document.getElementById('profile-top-traffic');
+    this.profileJoinBadge = document.getElementById('profile-join-badge');
+    this.profileJoinStatus = document.getElementById('profile-join-status');
 
     // Scan Progress Modal Elements
     this.scanModalOverlay = document.getElementById('scan-modal-overlay');
@@ -194,6 +197,9 @@ class TrueRpmApp {
     this.cardMonthlyAdSense = document.getElementById('card-monthly-adsense');
     this.cardDailyAdSense = document.getElementById('card-daily-adsense');
     this.cardAnnualAdSense = document.getElementById('card-annual-adsense');
+    this.cardMembershipsVal = document.getElementById('card-memberships-val');
+    this.cardMembershipsSub = document.getElementById('card-memberships-sub');
+    this.cardMembershipsBadge = document.getElementById('card-memberships-badge');
     this.cardTierMix = document.getElementById('card-tier-mix');
     this.cardTierDetails = document.getElementById('card-tier-details');
     this.cardEcosystemTotal = document.getElementById('card-ecosystem-total');
@@ -215,6 +221,7 @@ class TrueRpmApp {
     // Multi-stream tab
     this.streamBrandVal = document.getElementById('stream-brand-val');
     this.streamFanVal = document.getElementById('stream-fan-val');
+    this.streamFanSub = document.getElementById('stream-fan-sub');
     this.streamAffiliateVal = document.getElementById('stream-affiliate-val');
     this.streamGrandTotal = document.getElementById('stream-grand-total');
 
@@ -681,6 +688,7 @@ class TrueRpmApp {
     this.state.isMonetized = channel.isMonetized;
     this.state.monetizationTier = channel.monetizationTier;
     this.state.monetizationReason = channel.monetizationReason;
+    this.state.hasJoinButton = (channel.hasJoinButton === true);
     this.state.traffic = JSON.parse(JSON.stringify(channel.trafficDistribution));
     this.state.activePresetId = null;
 
@@ -717,6 +725,27 @@ class TrueRpmApp {
       this.profileMonetizationBadge.innerHTML = `<span class="badge-icon">⚠️</span><span class="badge-text">Unmonetized / Ineligible</span>`;
     }
     this.profileMonetizationReason.textContent = this.state.monetizationReason;
+
+    // Join Button badge & status
+    if (this.profileJoinBadge) {
+      if (this.state.hasJoinButton) {
+        this.profileJoinBadge.className = 'badge-join active';
+        this.profileJoinBadge.innerHTML = `<span class="badge-icon">⭐</span><span class="badge-text">Join Button Active</span>`;
+      } else {
+        this.profileJoinBadge.className = 'badge-join inactive';
+        this.profileJoinBadge.innerHTML = `<span class="badge-icon">❌</span><span class="badge-text">No Join Button</span>`;
+      }
+    }
+    if (this.profileJoinStatus) {
+      if (this.state.hasJoinButton) {
+        const estMembers = Math.round(this.state.subscribers * 0.001);
+        this.profileJoinStatus.className = 'highlight-emerald';
+        this.profileJoinStatus.textContent = `Active (~${this.formatCompactNumber(estMembers)} Members)`;
+      } else {
+        this.profileJoinStatus.className = 'highlight-rose';
+        this.profileJoinStatus.textContent = 'Disabled (0 Members)';
+      }
+    }
 
     this.profileSubscribers.textContent = this.formatCompactNumber(this.state.subscribers);
     this.profileTotalViews.textContent = this.formatCompactNumber(this.state.totalViews);
@@ -877,7 +906,10 @@ class TrueRpmApp {
       durationId: this.state.durationId,
       traffic: this.state.traffic,
       isMonetized: this.state.isMonetized,
-      adblockPercent: this.state.adblockEnabled ? this.state.adblockPercent : 0
+      adblockPercent: this.state.adblockEnabled ? this.state.adblockPercent : 0,
+      subscribers: this.state.subscribers,
+      hasJoinButton: this.state.hasJoinButton,
+      countryCode: this.state.countryCode
     });
 
     // 2. Update Input Display Values
@@ -996,8 +1028,36 @@ class TrueRpmApp {
       this.cardDailyAdSense.innerHTML = `Potential: ~${this.formatMoney(results.earnings.potentialMonthlyAdSense)}/mo`;
       this.cardAnnualAdSense.innerHTML = `<span style="color:#f87171;">${this.formatMoney(0)}</span> <span style="font-size:0.75rem; color:#94a3b8;">(Potential: ${this.formatMoney(results.earnings.potentialYearlyAdSense)})</span>`;
     }
-    this.cardTierMix.textContent = `${results.metrics.tier1SharePercent}% Tier 1 · ${results.metrics.tier3SharePercent}% Tier 3`;
-    this.cardTierDetails.textContent = `Weighted Fill Rate: ${results.metrics.weightedFillRate}%`;
+
+    // Update Channel Memberships Card (Replaced Audience Purchasing Tier)
+    if (this.cardMembershipsVal) {
+      if (results.earnings.hasJoinButton && results.earnings.paidMembersCount > 0) {
+        this.cardMembershipsVal.innerHTML = `${this.formatMoney(results.earnings.membershipsMonthlyNetUsd)} <span class="unit">/mo</span>`;
+        const priceLabel = this.state.countryCode === 'IN' ? '₹89/mo' : '$2.99/mo';
+        if (this.cardMembershipsSub) {
+          this.cardMembershipsSub.textContent = `${this.formatNumber(results.earnings.paidMembersCount)} Members (0.1% @ ${priceLabel} - 70% Cut)`;
+        }
+        if (this.cardMembershipsBadge) {
+          this.cardMembershipsBadge.textContent = '✅ Join Button Active';
+          this.cardMembershipsBadge.className = 'metric-badge-status green';
+        }
+      } else {
+        this.cardMembershipsVal.innerHTML = `${this.formatMoney(0)} <span class="unit">/mo</span>`;
+        if (this.cardMembershipsSub) {
+          this.cardMembershipsSub.textContent = '0 Members (Join Perks Disabled)';
+        }
+        if (this.cardMembershipsBadge) {
+          this.cardMembershipsBadge.textContent = '❌ No Join Button';
+          this.cardMembershipsBadge.className = 'metric-badge-status gray';
+        }
+      }
+    }
+    if (this.cardTierMix) {
+      this.cardTierMix.textContent = `${results.metrics.tier1SharePercent}% Tier 1 · ${results.metrics.tier3SharePercent}% Tier 3`;
+    }
+    if (this.cardTierDetails) {
+      this.cardTierDetails.textContent = `Weighted Fill Rate: ${results.metrics.weightedFillRate}%`;
+    }
     this.cardEcosystemTotal.innerHTML = `${this.formatMoney(results.earnings.totalEcosystemMonthly)} <span class="unit">/mo</span>`;
 
     // 7. Update Tabs Content
@@ -1360,6 +1420,14 @@ class TrueRpmApp {
   renderMultiStreamTab(results) {
     this.streamBrandVal.textContent = `${this.formatMoney(results.earnings.brandDealMonthly)} /mo`;
     this.streamFanVal.textContent = `${this.formatMoney(results.earnings.fanFundingMonthly)} /mo`;
+    if (this.streamFanSub) {
+      if (results.earnings.hasJoinButton && results.earnings.paidMembersCount > 0) {
+        const priceLabel = this.state.countryCode === 'IN' ? '₹89/mo' : '$2.99/mo';
+        this.streamFanSub.textContent = `Active Join button: ~${this.formatCompactNumber(results.earnings.paidMembersCount)} members (0.1% of subs @ ${priceLabel}, 70% net payout after YouTube 30% cut).`;
+      } else {
+        this.streamFanSub.textContent = '❌ No Join button active on channel. Channel membership perks revenue is $0.';
+      }
+    }
     this.streamAffiliateVal.textContent = `${this.formatMoney(results.earnings.affiliateMonthly)} /mo`;
     this.streamGrandTotal.textContent = `${this.formatMoney(results.earnings.totalEcosystemMonthly)} /mo`;
   }

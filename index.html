@@ -131,6 +131,10 @@
                 <span class="badge-icon">✅</span>
                 <span class="badge-text">Monetized (YPP Active)</span>
               </div>
+              <div id="profile-join-badge" class="badge-join active">
+                <span class="badge-icon">⭐</span>
+                <span class="badge-text">Join Button Active</span>
+              </div>
             </div>
             <p id="profile-monetization-reason" class="profile-reason">Enrolled in YouTube Partner Program with active AdSense and multi-million ad inventory.</p>
           </div>
@@ -178,6 +182,10 @@
           <div class="stat-pill">
             <span class="stat-label">AdBlock Filter</span>
             <strong id="profile-adblock-rate" class="highlight-rose">25% Unpaid</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Join Perks (0.1%)</span>
+            <strong id="profile-join-status" class="highlight-emerald">Active (~44.5K Members)</strong>
           </div>
         </div>
       </div>
@@ -706,11 +714,11 @@
             <div class="metric-badge-status blue">12-Month Projection</div>
           </div>
 
-          <div class="metric-card glass">
-            <span class="metric-title">Audience Purchasing Tier</span>
-            <div class="metric-value font-text" id="card-tier-mix">78% Tier 3</div>
-            <span class="metric-sub" id="card-tier-details">High Volume, Lower CPM</span>
-            <div class="metric-badge-status amber">Ad Auction Power</div>
+          <div class="metric-card glass" id="card-memberships-container">
+            <span class="metric-title">Channel Memberships (Join Button)</span>
+            <div class="metric-value font-text highlight-emerald" id="card-memberships-val">$33,018 <span class="unit">/mo</span></div>
+            <span class="metric-sub" id="card-memberships-sub">44,500 Members (0.1% @ ₹89/mo - 70% Cut)</span>
+            <div class="metric-badge-status green" id="card-memberships-badge">✅ Join Button Active</div>
           </div>
 
           <div class="metric-card glass">
@@ -833,9 +841,9 @@
 
                 <div class="stream-card">
                   <div class="stream-icon">❤️</div>
-                  <h5>Memberships & SuperChats</h5>
-                  <div class="stream-val" id="stream-fan-val">$480 /mo</div>
-                  <p class="stream-sub">Direct fan patronage weighted by audience discretionary spending and credit card adoption.</p>
+                  <h5>Channel Memberships (Join Button)</h5>
+                  <div class="stream-val" id="stream-fan-val">$33,018 /mo</div>
+                  <p class="stream-sub" id="stream-fan-sub">0.1% of subscribers join for perks (70% net payout after YouTube 30% cut).</p>
                 </div>
 
                 <div class="stream-card">

@@ -82,6 +82,7 @@ export class ChannelResolver {
             monetizationReason: data.monetizationReason || (data.isMonetized
               ? 'Verified YouTube Partner Program (YPP) active. Live ad inventory & commercial monetization tags confirmed.'
               : 'Channel is below 1,000 subscribers or does not meet YPP public watch criteria.'),
+            hasJoinButton: Boolean(data.hasJoinButton),
             trafficDistribution: traffic,
             isVerifiedCreator: true,
             source: 'YOUTUBE_LIVE_DATA'
@@ -227,6 +228,7 @@ export class ChannelResolver {
       monetizationReason: isMonetized 
         ? 'Verified YouTube Partner Program (YPP) requirements met (>1,000 subscribers, 4,000 public watch hours, active AdSense association).'
         : 'Channel is below the minimum YPP threshold (requires at least 1,000 subscribers and 4,000 public watch hours). No AdSense revenue generated.',
+      hasJoinButton: false,
       trafficDistribution: traffic,
       isVerifiedCreator: false,
       source: 'AUTOMATED_SCANNER'
