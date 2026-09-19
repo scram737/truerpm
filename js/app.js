@@ -9,7 +9,7 @@ import { ChannelResolver } from './resolver.js';
 // Currency exchange rates (relative to USD)
 const CURRENCIES = {
   USD: { symbol: '$', rate: 1.00, prefix: true },
-  INR: { symbol: '₹', rate: 83.50, prefix: true },
+  INR: { symbol: '₹', rate: 84.00, prefix: true },
   EUR: { symbol: '€', rate: 0.92, prefix: false },
   GBP: { symbol: '£', rate: 0.79, prefix: true },
   CAD: { symbol: 'C$', rate: 1.36, prefix: true },
@@ -282,8 +282,17 @@ class TrueRpmApp {
     // Dual currency preview on main reality card
     this.dispRealityInrPreview = document.getElementById('disp-reality-inr-preview');
     this.dispRealityInrVal = document.getElementById('disp-reality-inr-val');
+    this.dispRealityInrTaxVal = document.getElementById('disp-reality-inr-tax-val');
     this.dispRealityInrNet = document.getElementById('disp-reality-inr-net');
     this.dispRealityInrNetVal = document.getElementById('disp-reality-inr-net-val');
+
+    // Step 5 Calculation Proof Elements
+    this.proofTaxGrossUsd = document.getElementById('proof-tax-gross-usd');
+    this.proofTaxFxRate = document.getElementById('proof-tax-fx-rate');
+    this.proofTaxGrossInr = document.getElementById('proof-tax-gross-inr');
+    this.proofTaxUsDeduction = document.getElementById('proof-tax-us-deduction');
+    this.proofTaxIndiaDeduction = document.getElementById('proof-tax-india-deduction');
+    this.proofTaxNetInhand = document.getElementById('proof-tax-net-inhand');
   }
 
   setupEventListeners() {
@@ -545,14 +554,18 @@ class TrueRpmApp {
   // Format currency helpers
   formatMoney(amountInUsd, decimals = 0) {
     const cur = CURRENCIES[this.state.currency] || CURRENCIES.USD;
-    const converted = amountInUsd * cur.rate;
-    const formatted = Math.round(converted).toLocaleString();
+    const rate = this.state.currency === 'INR' ? this.state.exchangeRate : cur.rate;
+    const converted = amountInUsd * rate;
+    const formatted = this.state.currency === 'INR'
+      ? Math.round(converted).toLocaleString('en-IN')
+      : Math.round(converted).toLocaleString();
     return cur.prefix ? `${cur.symbol}${formatted}` : `${formatted} ${cur.symbol}`;
   }
 
   formatRpm(rpmInUsd) {
     const cur = CURRENCIES[this.state.currency] || CURRENCIES.USD;
-    const converted = rpmInUsd * cur.rate;
+    const rate = this.state.currency === 'INR' ? this.state.exchangeRate : cur.rate;
+    const converted = rpmInUsd * rate;
     const val = converted >= 10 ? converted.toFixed(1) : converted.toFixed(2);
     return cur.prefix ? `${cur.symbol}${val}` : `${val} ${cur.symbol}`;
   }
@@ -909,19 +922,50 @@ class TrueRpmApp {
     this.renderTrafficMultiBar(results.countryBreakdown);
     this.renderCountryAllocationList();
 
+    // 3b. Calculate India Dollar Conversion & Income Tax
+    const usTraffic = this.state.traffic.find(t => t.code === 'US');
+    const usTrafficSharePercent = usTraffic ? Number(usTraffic.share) || 0 : 0;
+
+    const indiaTaxResults = this.engine.calculateIndiaTax({
+      monthlyGrossUsd: this.state.isMonetized ? results.earnings.monthlyAdSense : 0,
+      usTrafficSharePercent,
+      exchangeRate: this.state.exchangeRate,
+      regime: this.state.indiaTaxRegime,
+      flatPercent: this.state.indiaFlatTaxPercent,
+      hasW8Ben: this.state.hasW8Ben
+    });
+
     // 4. Update The Reality Check Battlefield Card
     const fbMin = this.formatMoney(results.comparison.socialBladeMin);
     const fbMax = this.formatMoney(results.comparison.socialBladeMax);
     this.statFantasyRange.textContent = `${fbMin} – ${fbMax} /mo`;
 
     if (this.state.isMonetized) {
-      this.statRealityPrice.innerHTML = `${this.formatMoney(results.earnings.monthlyAdSense)} <span class="unit">/mo</span>`;
-      this.statRealityRange.textContent = `${this.formatMoney(results.earnings.monthlyAdSenseMin)} – ${this.formatMoney(results.earnings.monthlyAdSenseMax)}`;
+      if (this.state.currency === 'INR') {
+        this.statRealityPrice.innerHTML = `${this.formatInr(indiaTaxResults.netInHandMonthlyInr)} <span class="unit">/mo (Net In-Hand)</span>`;
+        this.statRealityRange.innerHTML = `Gross AdSense: <strong>${this.formatInr(indiaTaxResults.grossMonthlyInr)}</strong> · Deductions at End: <strong style="color:#f87171;">-${this.formatInr(indiaTaxResults.totalDeductionsMonthlyInr)}</strong>`;
+      } else {
+        this.statRealityPrice.innerHTML = `${this.formatMoney(results.earnings.monthlyAdSense)} <span class="unit">/mo</span>`;
+        this.statRealityRange.textContent = `${this.formatMoney(results.earnings.monthlyAdSenseMin)} – ${this.formatMoney(results.earnings.monthlyAdSenseMax)}`;
+      }
       this.statEffectiveRpm.textContent = this.formatRpm(results.metrics.effectiveChannelRpm);
     } else {
       this.statRealityPrice.innerHTML = `<span style="color:#f87171;">${this.formatMoney(0)}</span> <span class="unit" style="color:#f87171;">/mo (Unmonetized)</span>`;
       this.statRealityRange.innerHTML = `Actual: <strong>${this.formatMoney(0)}</strong> · Potential if YPP approved: <strong style="color:#34d399;">${this.formatMoney(results.earnings.potentialMonthlyAdSense)}</strong>`;
       this.statEffectiveRpm.innerHTML = `<span style="color:#f87171;">${this.formatRpm(0)}</span> (Potential: <strong style="color:#34d399;">${this.formatRpm(results.metrics.potentialChannelRpm)}</strong>)`;
+    }
+
+    // Dual currency & tax-at-end preview on Reality Battlefield card
+    if (this.dispRealityInrVal) {
+      this.dispRealityInrVal.textContent = `${this.formatInr(indiaTaxResults.grossMonthlyInr)}`;
+    }
+    if (this.dispRealityInrTaxVal) {
+      this.dispRealityInrTaxVal.textContent = indiaTaxResults.totalDeductionsMonthlyInr > 0 
+        ? `-${this.formatInr(indiaTaxResults.totalDeductionsMonthlyInr)}`
+        : '₹0 (Sec 87A Rebate)';
+    }
+    if (this.dispRealityInrNetVal) {
+      this.dispRealityInrNetVal.textContent = `${this.formatInr(indiaTaxResults.netInHandMonthlyInr)} /mo`;
     }
 
     // 5. Update Diagnostics Pills (Explaining the gap to the user)
@@ -940,7 +984,7 @@ class TrueRpmApp {
     }
 
     // 5c. Update Step-by-Step Calculation Breakdown & Formulas
-    this.renderCalculationProof(results);
+    this.renderCalculationProof(results, indiaTaxResults);
 
     // 6. Update Metric Cards
     if (this.state.isMonetized) {
@@ -967,27 +1011,7 @@ class TrueRpmApp {
     this.renderMonthlyDivisionTab(monthlyDivision);
     this.updateViewsScopeUI();
 
-    // 9. Update India Dollar Conversion & Income Tax Calculator
-    const usTraffic = this.state.traffic.find(t => t.code === 'US');
-    const usTrafficSharePercent = usTraffic ? Number(usTraffic.share) || 0 : 0;
-
-    const indiaTaxResults = this.engine.calculateIndiaTax({
-      monthlyGrossUsd: this.state.isMonetized ? results.earnings.monthlyAdSense : 0,
-      usTrafficSharePercent,
-      exchangeRate: this.state.exchangeRate,
-      regime: this.state.indiaTaxRegime,
-      flatPercent: this.state.indiaFlatTaxPercent,
-      hasW8Ben: this.state.hasW8Ben
-    });
-
-    // Dual currency preview on Reality Battlefield card
-    if (this.dispRealityInrVal) {
-      this.dispRealityInrVal.textContent = `${this.formatInr(indiaTaxResults.grossMonthlyInr)} /mo`;
-    }
-    if (this.dispRealityInrNetVal) {
-      this.dispRealityInrNetVal.textContent = `${this.formatInr(indiaTaxResults.netInHandMonthlyInr)} /mo`;
-    }
-
+    // 9. Update India Dollar Conversion & Income Tax Tab
     this.renderIndiaTaxTab(results, indiaTaxResults);
   }
 
@@ -1167,7 +1191,7 @@ class TrueRpmApp {
     }
   }
 
-  renderCalculationProof(results) {
+  renderCalculationProof(results, tax) {
     const totalViews = this.state.monthlyViews;
     const monetizedLong = results.views.monetizedLong;
     const monetizedShorts = results.views.monetizedShorts;
@@ -1255,6 +1279,32 @@ class TrueRpmApp {
     if (this.proofOverestimateMultiple) {
       const mult = totalAdSense > 0 ? Math.round(fbMax / totalAdSense) : 0;
       this.proofOverestimateMultiple.textContent = mult > 1 ? `${mult}x` : '16x';
+    }
+
+    // Step 5: Forex & Taxes Applied at End
+    if (tax) {
+      if (this.proofTaxGrossUsd) {
+        this.proofTaxGrossUsd.textContent = `$${Math.round(tax.grossMonthlyUsd).toLocaleString()} /mo`;
+      }
+      if (this.proofTaxFxRate) {
+        this.proofTaxFxRate.textContent = `1 USD = ₹${tax.exchangeRate.toFixed(2)}`;
+      }
+      if (this.proofTaxGrossInr) {
+        this.proofTaxGrossInr.textContent = `${this.formatInr(tax.grossMonthlyInr)} /mo`;
+      }
+      if (this.proofTaxUsDeduction) {
+        this.proofTaxUsDeduction.textContent = tax.usWithholdingMonthlyInr > 0 
+          ? `-${this.formatInr(tax.usWithholdingMonthlyInr)} /mo` 
+          : '₹0 (No US traffic)';
+      }
+      if (this.proofTaxIndiaDeduction) {
+        this.proofTaxIndiaDeduction.textContent = tax.indianIncomeTaxMonthlyInr > 0 
+          ? `-${this.formatInr(tax.indianIncomeTaxMonthlyInr)} /mo` 
+          : '₹0 (Sec 87A Full Rebate)';
+      }
+      if (this.proofTaxNetInhand) {
+        this.proofTaxNetInhand.textContent = `${this.formatInr(tax.netInHandMonthlyInr)} /mo`;
+      }
     }
   }
 

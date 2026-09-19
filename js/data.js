@@ -317,6 +317,36 @@ export const GEO_INFERENCE_RULES = {
 
 export const VERIFIED_CHANNELS = [
   {
+    handle: '@999india',
+    name: '999India',
+    channelId: 'UCQ5yNhhqbTqXxJ34RcQkAcA',
+    avatar: 'https://yt3.googleusercontent.com/JW_vWVY8wUGnQcSywCa0DfAiO6vQ54_OjGd1jnGYysfEtGIwAlDAhyX8vWYGxPXR0tzB-b5mqA=s900-c-k-c0x00ffffff-no-rj',
+    subscribers: 2570000,
+    totalViews: 3878508407,
+    videoCount: 750,
+    joinedDate: 'Jan 26, 2022',
+    channelAgeMonths: 56,
+    monthlyViews: 42000000,
+    thisMonthViews: 42000000,
+    actualViewsByDate: 42000000,
+    averageMonthlyViews: 42000000,
+    dailyViews: 1400000,
+    shortsShare: 95,
+    niche: 'comedy',
+    duration: 'mid_video',
+    countryCode: 'IN',
+    isMonetized: true,
+    monetizationTier: 'YPP_ACTIVE',
+    monetizationReason: 'Verified YouTube Partner Program (YPP) active. 3.88 Billion lifetime views driven by viral Telugu comedy sketches & shorts (95% Shorts / 5% Long-form).',
+    trafficDistribution: [
+      { code: 'IN', share: 82 },
+      { code: 'PK', share: 6 },
+      { code: 'BD', share: 4 },
+      { code: 'AE', share: 4 },
+      { code: 'US', share: 4 }
+    ]
+  },
+  {
     handle: '@filmymoji',
     name: 'Filmymoji',
     channelId: 'UCjNVDW-rkDYR0aOKp3E-2wg',

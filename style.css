@@ -2983,19 +2983,33 @@ body {
   letter-spacing: 0.04em;
 }
 
-.reality-inr-preview strong {
+.reality-inr-preview .inr-flow-chunk {
+  color: #cbd5e1;
+  font-size: 0.8rem;
+}
+
+.reality-inr-preview .inr-flow-chunk strong {
   color: #fdba74;
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
+  font-size: 0.88rem;
+}
+
+.reality-inr-preview .inr-tax-chunk strong {
+  color: #f87171;
 }
 
 .reality-inr-preview .inr-net-tag {
-  color: #94a3b8;
-  font-size: 0.78rem;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 0.25rem 0.55rem;
+  border-radius: 4px;
+  color: #a7f3d0;
+  font-size: 0.82rem;
 }
 
 .reality-inr-preview .inr-net-tag strong {
   color: #34d399;
+  font-weight: 700;
+  font-size: 0.95rem;
 }
 
 /* India Tax Interactive Controls Bar */

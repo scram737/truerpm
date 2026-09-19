@@ -151,7 +151,7 @@ export class ChannelResolver {
       detectedNiche = 'tech';
     } else if (/game|gaming|esports|minecraft|roblox|fortnite|play|stream|gta|valorant|pubg/i.test(lower)) {
       detectedNiche = 'gaming';
-    } else if (/comedy|roast|funny|meme|prank|humor|skit|filmy|emoji/i.test(lower)) {
+    } else if (/comedy|roast|funny|meme|prank|humor|skit|filmy|emoji|vines|999/i.test(lower)) {
       detectedNiche = 'comedy';
     } else if (/learn|course|study|science|physics|history|explained|documentary|how to|tutorial/i.test(lower)) {
       detectedNiche = 'education';

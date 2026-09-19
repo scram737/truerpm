@@ -104,6 +104,7 @@
       <div class="search-suggestions-row">
         <span class="suggestions-label">Try instant lookup:</span>
         <div class="suggestion-chips" id="search-suggestion-chips">
+          <button class="chip-suggest" data-handle="@999india">🔥 @999India (3.88B Views)</button>
           <button class="chip-suggest" data-handle="UCjNVDW-rkDYR0aOKp3E-2wg">🎬 @FilmyMoji (Reference)</button>
           <button class="chip-suggest" data-handle="@CarryMinati">🇮🇳 @CarryMinati</button>
           <button class="chip-suggest" data-handle="@MrBeast">🇺🇸 @MrBeast</button>
@@ -457,9 +458,10 @@
               <div class="box-label-accent">TrueRPM Realistic Take-Home</div>
               <div class="reality-highlight-price" id="stat-reality-price">$4,860 <span class="unit">/mo</span></div>
               <div class="reality-inr-preview" id="disp-reality-inr-preview">
-                <span class="inr-tag">🇮🇳 INR Conversion:</span>
-                <strong id="disp-reality-inr-val">₹4,08,240 /mo</strong>
-                <span class="inr-net-tag" id="disp-reality-inr-net">· In-Hand after Tax: <strong id="disp-reality-inr-net-val">₹3,65,000 /mo</strong></span>
+                <span class="inr-tag">🇮🇳 INR Conversion & Tax:</span>
+                <span class="inr-flow-chunk">Gross: <strong id="disp-reality-inr-val">₹4,08,240</strong></span>
+                <span class="inr-flow-chunk inr-tax-chunk">Taxes (Applied at End): <strong id="disp-reality-inr-tax-val">-₹43,240</strong></span>
+                <span class="inr-net-tag" id="disp-reality-inr-net">→ 💰 Net Bank In-Hand: <strong id="disp-reality-inr-net-val">₹3,65,000 /mo</strong></span>
               </div>
               <div class="reality-bounds">
                 Expected Range: <strong id="stat-reality-range">$3,985 – $6,075</strong>
@@ -643,6 +645,43 @@
                       <li><strong>AdBlock Ignored:</strong> Assumes 100% of viewers watch ads. In reality, <span id="proof-adblock-flaw">25%</span> use adblockers or have zero ads served, earning $0.</li>
                       <li><strong>Reality Gap:</strong> Generic tool overstates creator revenue by up to <strong><span id="proof-overestimate-multiple">40x</span></strong>!</li>
                     </ul>
+                  </div>
+                </div>
+
+                <!-- STEP 5: USD to INR & Taxes Applied at End -->
+                <div class="calc-step-card inr-tax-step-card">
+                  <div class="calc-step-header">
+                    <span class="step-badge step-5" style="background:#059669; color:#fff;">STEP 5</span>
+                    <span class="step-title">Forex Conversion & Taxes Applied at End</span>
+                  </div>
+                  <div class="step-content">
+                    <div class="step-row">
+                      <span>Gross USD AdSense:</span>
+                      <strong id="proof-tax-gross-usd">$1,850 /mo</strong>
+                    </div>
+                    <div class="step-row">
+                      <span>Forex Exchange Rate:</span>
+                      <strong id="proof-tax-fx-rate">1 USD = ₹84.00</strong>
+                    </div>
+                    <div class="step-row highlight-monetized">
+                      <span>🇮🇳 Gross Indian Rupees (₹):</span>
+                      <strong id="proof-tax-gross-inr">₹1,55,400 /mo</strong>
+                    </div>
+                    <div class="step-row highlight-adblock">
+                      <span>US Withholding Tax (W-8BEN 15% on US views):</span>
+                      <strong id="proof-tax-us-deduction">-₹932 /mo</strong>
+                    </div>
+                    <div class="step-row highlight-adblock">
+                      <span>Indian Income Tax (Sec 44ADA 50% Presumptive):</span>
+                      <strong id="proof-tax-india-deduction">-₹3,748 /mo</strong>
+                    </div>
+                    <div class="step-sum-box" style="background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.4); padding: 0.75rem; border-radius: 6px; margin-top: 0.5rem;">
+                      <span style="font-weight: 600; color: #e2e8f0;">💰 Final Net In-Hand Bank Payout:</span>
+                      <strong id="proof-tax-net-inhand" style="color: #34d399; font-size: 1.15rem; display: block; margin-top: 0.25rem;">₹1,50,720 /mo</strong>
+                    </div>
+                  </div>
+                  <div class="step-footer-note">
+                    🏛️ <strong>Taxes Applied at End:</strong> Under Section 44ADA, creators pay tax on only 50% of revenue. Full Section 87A zero-tax rebate applies if taxable income is under ₹7 Lakhs/year.
                   </div>
                 </div>
 

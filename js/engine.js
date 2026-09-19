@@ -456,10 +456,13 @@ export class RevenueEngine {
 
     return {
       exchangeRate: rate,
-      grossMonthlyUsd,
-      grossAnnualUsd,
-      grossMonthlyInr,
+      monthlyGrossUsd,
+      annualGrossUsd,
+      grossMonthlyUsd: monthlyGrossUsd,
+      grossAnnualUsd: annualGrossUsd,
+      monthlyGrossInr,
       annualGrossInr,
+      grossMonthlyInr: monthlyGrossInr,
       usTrafficSharePercent,
       usEarningsMonthlyUsd,
       usWithholdingMonthlyUsd,
