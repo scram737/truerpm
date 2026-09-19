@@ -42,8 +42,10 @@ export class ChannelResolver {
     if (!rawQuery) return null;
 
     try {
-      const apiUrl = `/api/channel?query=${encodeURIComponent(rawQuery.trim())}`;
-      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(10000) });
+      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+      const backendBase = isLocal ? '' : 'https://truerpm-engine.onrender.com';
+      const apiUrl = `${backendBase}/api/channel?query=${encodeURIComponent(rawQuery.trim())}`;
+      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(15000) });
       if (resp.ok) {
         const data = await resp.json();
         if (data && data.success) {

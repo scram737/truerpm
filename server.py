@@ -216,19 +216,40 @@ def fetch_youtube_channel_live(query):
     desc = meta.get("description", "")
     keywords = meta.get("keywords", "")
 
-    # 2. Statistics
-    sub_match = re.search(r'([\d\.]+[MK]?)\s+subscribers', raw_str, re.IGNORECASE)
-    view_match = re.search(r'([\d,]+)\s+views', raw_str, re.IGNORECASE)
-    video_match = re.search(r'([\d,]+)\s+videos', raw_str, re.IGNORECASE)
+    # 2. Statistics - Prioritize accurate header & about metadata over raw string matching
+    subs_text = ""
+    views_text = ""
+    videos_text = ""
+
+    try:
+        ph_rows = data.get("header", {}).get("pageHeaderRenderer", {}).get("content", {}).get("pageHeaderViewModel", {}).get("metadata", {}).get("contentMetadataViewModel", {}).get("metadataRows", [])
+        for r in ph_rows:
+            for part in r.get("metadataParts", []):
+                t = part.get("text", {}).get("content", "")
+                if "subscriber" in t.lower():
+                    subs_text = t.replace("subscribers", "").replace("subscriber", "").strip()
+                elif "video" in t.lower():
+                    videos_text = t.replace("videos", "").replace("video", "").strip()
+    except Exception:
+        pass
+
+    # Exact channel lifetime views: pick the maximum view count match from the about payload
+    # (prevents single featured videos e.g. 6.6M from superseding the channel total 1.7B)
+    all_view_nums = [int(re.sub(r'[^\d]', '', x)) for x in re.findall(r'(\d[\d,]*\d)\s+views', html)]
+    if all_view_nums:
+        max_v = max(all_view_nums)
+        views_text = f"{max_v:,}"
+    elif not views_text:
+        view_match = re.search(r'([\d,]+)\s+views', raw_str, re.IGNORECASE)
+        views_text = view_match.group(1) if view_match else "0"
+    if not videos_text:
+        video_match = re.search(r'([\d,]+)\s+videos', raw_str, re.IGNORECASE)
+        videos_text = video_match.group(1) if video_match else "0"
 
     country_name = "Global"
     country_match = re.search(r'"country":\s*"([^"]+)"', raw_str)
     if country_match:
         country_name = country_match.group(1)
-
-    subs_text = sub_match.group(1) if sub_match else "0"
-    views_text = view_match.group(1) if view_match else "0"
-    videos_text = video_match.group(1) if video_match else "0"
 
     sub_num = 0
     if subs_text:
