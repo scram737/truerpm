@@ -13,6 +13,10 @@ export class ChannelResolver {
       this.verifiedMap.set(c.handle.toLowerCase(), c);
       this.verifiedMap.set(c.name.toLowerCase(), c);
       this.verifiedMap.set(c.handle.replace('@', '').toLowerCase(), c);
+      this.verifiedMap.set(c.name.toLowerCase().replace(/\s+/g, ''), c);
+      if (c.channelId) {
+        this.verifiedMap.set(c.channelId.toLowerCase(), c);
+      }
     });
   }
 
@@ -22,9 +26,10 @@ export class ChannelResolver {
   normalizeQuery(query) {
     if (!query) return '';
     let cleaned = query.trim();
-    // Strip URL prefixes like https://youtube.com/@channel or youtube.com/c/channel
+    // Strip URL prefixes like https://youtube.com/@channel or youtube.com/c/channel or youtube.com/channel/UC...
     cleaned = cleaned.replace(/^(https?:\/\/)?(www\.)?youtube\.com\/(@|c\/|channel\/)?/i, '');
     cleaned = cleaned.replace(/\/videos.*$/i, '');
+    cleaned = cleaned.replace(/\/about.*$/i, '');
     cleaned = cleaned.replace(/\/$/, '');
     return cleaned;
   }
@@ -59,8 +64,9 @@ export class ChannelResolver {
             monthlyViews: data.monthlyViews || Math.max(10000, Math.round((data.lifetimeViews || 0) * 0.065)),
             thisMonthViews: data.thisMonthViews || data.monthlyViews || Math.max(10000, Math.round((data.lifetimeViews || 0) * 0.065)),
             averageMonthlyViews: data.averageMonthlyViews || Math.round((data.lifetimeViews || 0) / Math.max(1, data.channelAgeMonths || 12)),
-            dailyViews: data.dailyViews || Math.round((data.monthlyViews || 0) / 30),
-            shortsShare: data.shortsShare !== undefined ? data.shortsShare : 30,
+            dailyViews: data.dailyViews || Math.round((data.monthlyViews || 10000) / 30),
+            videoCount: data.videoCount || 0,
+            shortsShare: data.shortsShare !== undefined ? data.shortsShare : 35,
             sampledLongViews: data.sampledLongViews || 0,
             sampledShortsViews: data.sampledShortsViews || 0,
             niche: data.niche || 'entertainment',
@@ -91,6 +97,7 @@ export class ChannelResolver {
   resolve(rawQuery) {
     const query = this.normalizeQuery(rawQuery);
     const lowerQuery = query.toLowerCase();
+    const compactQuery = lowerQuery.replace(/\s+/g, '').replace(/^@/, '');
 
     // 1. Direct match in verified intelligence database
     if (this.verifiedMap.has(lowerQuery)) {
@@ -102,9 +109,18 @@ export class ChannelResolver {
       };
     }
 
+    if (this.verifiedMap.has(compactQuery)) {
+      const match = this.verifiedMap.get(compactQuery);
+      return {
+        ...match,
+        isVerifiedCreator: true,
+        source: 'VERIFIED_DATABASE'
+      };
+    }
+
     // Partial match in verified list
     for (const [key, channel] of this.verifiedMap.entries()) {
-      if (key.includes(lowerQuery) || lowerQuery.includes(key)) {
+      if (key.includes(compactQuery) || compactQuery.includes(key)) {
         return {
           ...channel,
           isVerifiedCreator: true,
@@ -131,7 +147,7 @@ export class ChannelResolver {
       detectedNiche = 'tech';
     } else if (/game|gaming|esports|minecraft|roblox|fortnite|play|stream|gta|valorant|pubg/i.test(lower)) {
       detectedNiche = 'gaming';
-    } else if (/comedy|roast|funny|meme|prank|humor|skit/i.test(lower)) {
+    } else if (/comedy|roast|funny|meme|prank|humor|skit|filmy|emoji/i.test(lower)) {
       detectedNiche = 'comedy';
     } else if (/learn|course|study|science|physics|history|explained|documentary|how to|tutorial/i.test(lower)) {
       detectedNiche = 'education';
@@ -149,7 +165,7 @@ export class ChannelResolver {
 
     // B. Detect Country Origin & Audience Geo Flow
     let countryCode = 'US';
-    if (/hindi|india|bharat|desi|tamil|telugu|bengali|marathi|punjabi|vines/i.test(lower)) {
+    if (/hindi|india|bharat|desi|tamil|telugu|bengali|marathi|punjabi|vines|filmy|emoji|tollywood|bollywood|balu|madhu/i.test(lower)) {
       countryCode = 'IN';
     } else if (/uk|london|british|bbc/i.test(lower)) {
       countryCode = 'GB';

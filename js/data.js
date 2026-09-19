@@ -317,6 +317,57 @@ export const GEO_INFERENCE_RULES = {
 
 export const VERIFIED_CHANNELS = [
   {
+    handle: '@filmymoji',
+    name: 'Filmymoji',
+    channelId: 'UCjNVDW-rkDYR0aOKp3E-2wg',
+    avatar: 'https://yt3.googleusercontent.com/ytc/AIdro_l33grX8QP2RB1eB2yKmmLJigk7rCZ_nEApCQz60zDvtXU=s900-c-k-c0x00ffffff-no-rj',
+    subscribers: 79900,
+    totalViews: 6613873,
+    monthlyViews: 429901,
+    thisMonthViews: 429901,
+    averageMonthlyViews: 64841,
+    dailyViews: 14330,
+    shortsShare: 95,
+    niche: 'comedy',
+    duration: 'mid_video',
+    countryCode: 'IN',
+    isMonetized: true,
+    monetizationTier: 'YPP_ACTIVE',
+    monetizationReason: 'Verified YouTube Partner Program (YPP) active. Live ad inventory & commercial monetization tags confirmed.',
+    trafficDistribution: [
+      { code: 'IN', share: 82 },
+      { code: 'PK', share: 6 },
+      { code: 'BD', share: 4 },
+      { code: 'AE', share: 4 },
+      { code: 'US', share: 4 }
+    ]
+  },
+  {
+    handle: '@wildboybalu',
+    name: 'WildBoyBalu',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&auto=format&fit=crop&q=80',
+    subscribers: 125000,
+    totalViews: 26600000,
+    monthlyViews: 2216667,
+    thisMonthViews: 2216667,
+    averageMonthlyViews: 2216667,
+    dailyViews: 73888,
+    shortsShare: 90,
+    niche: 'entertainment',
+    duration: 'mid_video',
+    countryCode: 'IN',
+    isMonetized: true,
+    monetizationTier: 'YPP_ACTIVE',
+    monetizationReason: 'Enrolled in YouTube Partner Program. 24M Shorts / 2.6M Long Form split with 25% AdBlock deduction',
+    trafficDistribution: [
+      { code: 'IN', share: 82 },
+      { code: 'PK', share: 6 },
+      { code: 'BD', share: 4 },
+      { code: 'AE', share: 4 },
+      { code: 'US', share: 4 }
+    ]
+  },
+  {
     handle: '@mrbeast',
     name: 'MrBeast',
     avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=150&auto=format&fit=crop&q=80',
