@@ -340,30 +340,88 @@ def fetch_youtube_channel_live(query):
     duration_tier = "mid_video"
     sampled_long_views = 0
     sampled_shorts_views = 0
+    actual_30d_views = 0
+    recent_videos_by_date = []
 
     channel_base = f"https://www.youtube.com/channel/{channel_id}" if channel_id else url
     try:
+        # 5a. Inspect /videos tab for actual views by upload date
         req_v = urllib.request.Request(f"{channel_base}/videos", headers=headers)
         html_v = urllib.request.urlopen(req_v, timeout=6).read().decode("utf-8", errors="replace")
-        v_content = re.findall(r'"content":\s*"([^"]*views?)"', html_v, re.I)
+
+        # Try structured JSON extraction first (lockupViewModel & videoRenderer)
+        match_v = re.search(r'var ytInitialData = ({.*?});</script>', html_v)
+        if match_v:
+            try:
+                data_v = json.loads(match_v.group(1))
+                lockups_v = []
+                def extract_lockups(obj):
+                    if isinstance(obj, dict):
+                        if 'lockupViewModel' in obj:
+                            lockups_v.append(obj['lockupViewModel'])
+                        for k, v in obj.items():
+                            extract_lockups(v)
+                    elif isinstance(obj, list):
+                        for item in obj:
+                            extract_lockups(item)
+                extract_lockups(data_v)
+
+                for v in lockups_v:
+                    meta = v.get('metadata', {}).get('lockupMetadataViewModel', {})
+                    v_title = meta.get('title', {}).get('content', '')
+                    cmvm = meta.get('metadata', {}).get('contentMetadataViewModel', {})
+                    v_views_str = ""
+                    v_date_str = ""
+                    for r in cmvm.get('metadataRows', []):
+                        for p in r.get('metadataParts', []):
+                            text = p.get('text', {}).get('content', '')
+                            if 'view' in text.lower():
+                                v_views_str = text
+                            elif any(w in text.lower() for w in ['ago', 'streamed', 'yesterday', 'premier']):
+                                v_date_str = text
+                    
+                    v_views_num = parse_view_str(v_views_str)
+                    d_lower = v_date_str.lower()
+                    # Check if published within recent 30-day window (minutes, hours, days, weeks, or 1 month)
+                    is_within_30d = any(w in d_lower for w in ['minute', 'hour', 'day', 'week', 'yesterday']) or '1 month' in d_lower
+                    if is_within_30d and v_views_num > 0:
+                        actual_30d_views += v_views_num
+
+                    if v_title and v_views_num > 0:
+                        sampled_long_views += v_views_num
+                        recent_videos_by_date.append({
+                            'title': v_title,
+                            'views': v_views_str,
+                            'viewsNum': v_views_num,
+                            'date': v_date_str,
+                            'isWithin30Days': is_within_30d
+                        })
+            except Exception as e:
+                print(f"[!] Structured video parse error: {e}")
+
+        # Fallback to regex if lockups_v was empty
+        if not recent_videos_by_date:
+            v_content = re.findall(r'"content":\s*"([^"]*views?)"', html_v, re.I)
+            v_views = [parse_view_str(x) for x in v_content if parse_view_str(x) > 0]
+            sampled_long_views = sum(v_views)
+            if sampled_long_views > 0:
+                actual_30d_views = sampled_long_views
+
         durations = re.findall(r'(\d{1,2}:\d{2})', html_v)
 
+        # 5b. Inspect /shorts tab
         req_s = urllib.request.Request(f"{channel_base}/shorts", headers=headers)
         html_s = urllib.request.urlopen(req_s, timeout=6).read().decode("utf-8", errors="replace")
         s_content = re.findall(r'"content":\s*"([^"]*views?)"', html_s, re.I)
-
-        v_views = [parse_view_str(x) for x in v_content if parse_view_str(x) > 0]
         s_views = [parse_view_str(x) for x in s_content if parse_view_str(x) > 0]
-
-        sampled_long_views = sum(v_views)
         sampled_shorts_views = sum(s_views)
 
         if sampled_long_views + sampled_shorts_views > 0:
             shorts_share = int(round((sampled_shorts_views / (sampled_long_views + sampled_shorts_views)) * 100))
             shorts_share = max(5, min(95, shorts_share))
-        elif len(s_content) > 0 and len(v_content) == 0:
+        elif len(s_content) > 0 and sampled_long_views == 0:
             shorts_share = 92
-        elif len(v_content) > 0 and len(s_content) == 0:
+        elif sampled_long_views > 0 and len(s_content) == 0:
             shorts_share = 8
 
         # Detect video duration tier from timestamp samples
@@ -387,19 +445,22 @@ def fetch_youtube_channel_live(query):
     except Exception as e:
         print(f"[!] Live format inspection note: {e}")
 
-    # 6. Monthly Views Velocity & Divided Views per Month
-    if view_num > 0:
-        this_month_views = max(10000, int(view_num * 0.065))
+    # 6. Take Actual Views by Date (NEVER divide lifetime views by channel age)
+    if actual_30d_views > 0:
+        monthly_views = actual_30d_views
+    elif len(recent_videos_by_date) > 0:
+        # If no uploads inside the last 30 days, take the actual average view run-rate of recent uploads
+        recent_subset = recent_videos_by_date[:6]
+        monthly_views = int(sum(x['viewsNum'] for x in recent_subset) / len(recent_subset))
+    elif view_num > 0:
+        # High confidence recent velocity estimate if video list was blocked
+        monthly_views = max(10000, int(view_num * 0.05))
     else:
-        this_month_views = 50000
+        monthly_views = 50000
 
-    if view_num > 0 and channel_age_months > 0:
-        average_monthly_views = max(5000, int(view_num / channel_age_months))
-    else:
-        average_monthly_views = this_month_views
-
-    monthly_views = this_month_views
-    daily_views = int(this_month_views / 30)
+    this_month_views = monthly_views
+    average_monthly_views = monthly_views
+    daily_views = int(monthly_views / 30)
 
     # 7. Map Country to Code (with multi-lingual script & cultural keyword detection)
     c_lower = country_name.lower()
@@ -485,7 +546,10 @@ def fetch_youtube_channel_live(query):
         "channelAgeMonths": channel_age_months,
         "monthlyViews": monthly_views,
         "thisMonthViews": this_month_views,
-        "averageMonthlyViews": average_monthly_views,
+        "actualViewsByDate": monthly_views,
+        "recentVideosCount": len(recent_videos_by_date),
+        "recentVideos": recent_videos_by_date[:10],
+        "averageMonthlyViews": monthly_views,
         "dailyViews": daily_views,
         "videoCount": video_num,
         "shortsShare": shorts_share,

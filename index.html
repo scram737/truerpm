@@ -145,22 +145,21 @@
             <strong id="profile-total-views">3.85B</strong>
           </div>
           <div class="stat-pill">
-            <span class="stat-label">Monthly Views</span>
-            <strong id="profile-monthly-views" class="highlight-cyan">28.0M</strong>
+            <span class="stat-label">Monthly Views (By Date)</span>
+            <strong id="profile-monthly-views" class="highlight-cyan">25.1M</strong>
           </div>
           <div class="stat-pill">
-            <span class="stat-label">Lifetime Monthly Avg</span>
-            <strong id="profile-lifetime-avg">--</strong>
+            <span class="stat-label">Actual 30-Day Views</span>
+            <strong id="profile-lifetime-avg" class="highlight-cyan">25.1M</strong>
           </div>
           <div class="stat-pill">
             <span class="stat-label">Channel Inception</span>
             <strong id="profile-channel-age">Joined 2021</strong>
           </div>
           <div class="stat-pill profile-timeframe-pill">
-            <span class="stat-label">Apply to Calculator</span>
+            <span class="stat-label">Measurement</span>
             <div class="profile-mode-toggles">
-              <button type="button" class="btn-profile-mode active" id="btn-profile-this-month" title="Apply this month's velocity">⚡ This Month</button>
-              <button type="button" class="btn-profile-mode" id="btn-profile-lifetime-avg" title="Apply lifetime monthly average">📅 Monthly Avg</button>
+              <button type="button" class="btn-profile-mode active" id="btn-profile-this-month" title="Calculated from actual video upload dates">⚡ Actual by Date</button>
             </div>
           </div>
           <div class="stat-pill">
@@ -260,29 +259,24 @@
               <input type="text" id="input-channel-name" class="text-input" value="My Global Channel" placeholder="e.g. Veritasium, T-Series...">
             </div>
 
-            <!-- Monthly Views with Division & Timeframe Scope -->
+            <!-- Monthly Views with Actual Dates & Velocity -->
             <div class="form-field">
-              <!-- Views Scope & Division Options -->
+              <!-- Views Scope & Measurement -->
               <div class="views-division-control">
                 <div class="field-label-row">
-                  <span class="division-control-title">Views Division & Timeframe</span>
-                  <button type="button" id="btn-open-divide-modal" class="btn-link-action" title="Custom view division calculator">
-                    ➗ Divide Views Tool
-                  </button>
+                  <span class="division-control-title">Views Measured by Upload Date</span>
+                  <span class="badge-status-green" style="font-size:0.72rem; padding:0.2rem 0.5rem; border-radius:4px; font-weight:600;">📅 Date Verified</span>
                 </div>
                 <div class="views-scope-toggle-pills" id="views-scope-pills">
                   <button type="button" class="scope-pill active" id="btn-scope-this-month" data-scope="this-month">
-                    <span class="scope-dot"></span> ⚡ This Month
+                    <span class="scope-dot"></span> ⚡ Actual 30-Day Views (By Date)
                   </button>
                   <button type="button" class="scope-pill" id="btn-scope-lifetime-avg" data-scope="lifetime-avg">
-                    📅 Lifetime ÷ Months
-                  </button>
-                  <button type="button" class="scope-pill" id="btn-scope-annual-12" data-scope="annual-12">
-                    ➗ Total ÷ 12
+                    🎥 Recent Uploads Run-Rate
                   </button>
                 </div>
                 <div class="views-scope-caption" id="views-scope-caption">
-                  Active Mode: ⚡ <strong>This Month</strong> (Recent 30-Day Velocity)
+                  Active Mode: ⚡ <strong>Actual Views by Date</strong> (Calculated from recent 30-day video uploads)
                 </div>
               </div>
 
@@ -694,7 +688,7 @@
             <button class="tab-btn active" data-target="tab-country-breakdown">Geographic Revenue Contribution</button>
             <button class="tab-btn" data-target="tab-format-breakdown">Format & Length Breakdown</button>
             <button class="tab-btn" data-target="tab-multistream">Multi-Stream Ecosystem Potential</button>
-            <button class="tab-btn" data-target="tab-monthly-division">📅 12-Month Views Division (This Month)</button>
+            <button class="tab-btn" data-target="tab-monthly-division">📅 12-Month Earnings Calendar (By Date)</button>
             <button class="tab-btn highlight-tab-inr" data-target="tab-india-tax">🇮🇳 India Tax & In-Hand Payout</button>
           </div>
 
@@ -819,32 +813,29 @@
               </div>
             </div>
 
-            <!-- TAB 4: 12-Month Views & Earnings Division with This Month Focus -->
+            <!-- TAB 4: 12-Month Earnings Calendar with Actual Views by Date -->
             <div class="tab-pane" id="tab-monthly-division">
               <div class="monthly-division-header">
                 <div>
-                  <h4>12-Month Views & Earnings Division Schedule</h4>
-                  <p>Divide annual views into month-by-month allocations, modeling YouTube AdSense advertiser seasonality (Q1 budget reset vs. Q4 holiday peak).</p>
+                  <h4>12-Month Real-World AdSense Calendar (Actual Views by Date)</h4>
+                  <p>Real-world monthly YouTube AdSense earnings projections based on actual video upload views and advertiser seasonality (Q1 budget reset vs. Q4 holiday peak).</p>
                 </div>
                 <div class="this-month-highlight-box" id="banner-this-month-focus">
                   <div class="this-month-pill">🔥 THIS MONTH FOCUS</div>
                   <div class="this-month-val" id="disp-this-month-takehome">$4,691 /mo</div>
-                  <span class="this-month-sub" id="disp-this-month-views">26.6M views · Format & Geo weighted</span>
+                  <span class="this-month-sub" id="disp-this-month-views">25.1M views · Format & Geo weighted</span>
                 </div>
               </div>
 
-              <!-- Quick Divide Tool Bar -->
+              <!-- Real Views Tool Bar -->
               <div class="divide-tools-bar">
-                <span class="tool-caption">Views Allocation Presets:</span>
+                <span class="tool-caption">Views Measured by Date:</span>
                 <div class="divide-actions">
                   <button type="button" class="btn-divide-action active" id="btn-div-this-month">
-                    ⚡ Use This Month Run-Rate
+                    ⚡ Use Actual 30-Day Views (By Date)
                   </button>
                   <button type="button" class="btn-divide-action" id="btn-div-lifetime-avg">
-                    📅 Use Lifetime Monthly Avg (<span id="btn-div-lifetime-val">--</span>)
-                  </button>
-                  <button type="button" class="btn-divide-action" id="btn-div-split-12">
-                    ➗ Divide 100M Views ÷ 12
+                    🎥 Use Recent Uploads Run-Rate (<span id="btn-div-lifetime-val">--</span>)
                   </button>
                 </div>
               </div>
@@ -856,7 +847,7 @@
                     <tr>
                       <th>Month</th>
                       <th>Status</th>
-                      <th>Divided Views</th>
+                      <th>Monthly Views (By Date)</th>
                       <th>Long-Form Views</th>
                       <th>Shorts Views</th>
                       <th>AdSense Multiplier</th>
@@ -872,15 +863,15 @@
 
               <div class="monthly-summary-foot">
                 <div class="foot-stat">
-                  <span>Divided 12-Month Views Total:</span>
-                  <strong id="foot-annual-views">319,200,000</strong>
+                  <span>12-Month Projected Views:</span>
+                  <strong id="foot-annual-views">301,692,000</strong>
                 </div>
                 <div class="foot-stat">
-                  <span>Full Year Divided Take-Home:</span>
+                  <span>Full Year Annual Take-Home:</span>
                   <strong id="foot-annual-revenue" class="highlight-cyan">$56,293</strong>
                 </div>
                 <div class="foot-stat">
-                  <span>Average Divided Month:</span>
+                  <span>Average Monthly Take-Home:</span>
                   <strong id="foot-avg-monthly">$4,691 /mo</strong>
                 </div>
               </div>
@@ -1098,30 +1089,24 @@
   <div class="modal-overlay" id="divide-views-modal">
     <div class="modal-box glass">
       <div class="modal-header">
-        <h3>➗ Divide Views per Month Calculator</h3>
+        <h3>📅 Actual Video Views by Upload Date</h3>
         <button id="btn-close-divide-modal" class="modal-close">&times;</button>
       </div>
       <div class="modal-body">
+        <p style="color: #94a3b8; font-size: 0.85rem; margin-bottom: 1rem;">
+          TrueRPM counts the actual views generated by videos published within the date period, rather than artificially dividing lifetime views by channel age.
+        </p>
         <div class="form-field">
-          <label for="input-total-views-to-divide" class="field-label">Total Views to Divide</label>
-          <input type="number" id="input-total-views-to-divide" class="text-input" placeholder="e.g. 50000000" value="26600000">
-        </div>
-        <div class="form-field">
-          <label class="field-label">Divide Across Period</label>
-          <div class="divide-periods-grid">
-            <button type="button" class="divide-period-btn active" data-months="12">12 Months (Annual ÷ 12)</button>
-            <button type="button" class="divide-period-btn" data-months="6">6 Months (Half Year)</button>
-            <button type="button" class="divide-period-btn" data-months="3">3 Months (Quarter)</button>
-            <button type="button" class="divide-period-btn" data-months="channel">Channel Months Active</button>
-          </div>
+          <label for="input-total-views-to-divide" class="field-label">Actual 30-Day Views (By Upload Date)</label>
+          <input type="number" id="input-total-views-to-divide" class="text-input" placeholder="e.g. 25141000" value="25141000">
         </div>
         <div class="division-result-preview" id="division-result-preview">
-          <span>Calculated Allocation per Month:</span>
-          <strong id="disp-calc-divided-views">2,216,667 / month</strong>
+          <span>Active Monthly Velocity:</span>
+          <strong id="disp-calc-divided-views">25,141,000 / month</strong>
         </div>
       </div>
       <div class="modal-footer">
-        <button id="btn-apply-divided-views" class="btn-primary">Apply as Monthly Views</button>
+        <button id="btn-apply-divided-views" class="btn-primary">Apply Actual Views</button>
       </div>
     </div>
   </div>

@@ -48,13 +48,13 @@ class TrueRpmApp {
       activePresetId: null,
       adblockEnabled: true,
       adblockPercent: 25,
-      thisMonthViews: 26614610,
-      averageMonthlyViews: 6203871,
-      totalViews: 409455545,
+      thisMonthViews: 28000000,
+      actualViewsByDate: 28000000,
+      averageMonthlyViews: 28000000,
+      totalViews: 3850000000,
       channelAgeMonths: 66,
       joinedDate: 'Apr 16, 2021',
       viewScopeMode: 'this-month',
-      dividePeriodMonths: '12',
       // India Tax & FX Conversion State
       exchangeRate: 84.00,
       indiaTaxRegime: '44ada',
@@ -417,9 +417,6 @@ class TrueRpmApp {
     if (this.btnScopeLifetimeAvg) {
       this.btnScopeLifetimeAvg.addEventListener('click', () => this.setViewScope('lifetime-avg'));
     }
-    if (this.btnScopeAnnual12) {
-      this.btnScopeAnnual12.addEventListener('click', () => this.setViewScope('annual-12'));
-    }
 
     // Profile card timeframe buttons
     if (this.btnProfileThisMonth) {
@@ -435,9 +432,6 @@ class TrueRpmApp {
     }
     if (this.btnDivLifetimeAvg) {
       this.btnDivLifetimeAvg.addEventListener('click', () => this.setViewScope('lifetime-avg'));
-    }
-    if (this.btnDivSplit12) {
-      this.btnDivSplit12.addEventListener('click', () => this.setViewScope('annual-12'));
     }
 
     // Divide Modal listeners
@@ -662,10 +656,11 @@ class TrueRpmApp {
     this.state.totalViews = channel.totalViews;
     this.state.joinedDate = channel.joinedDate || '';
     this.state.channelAgeMonths = channel.channelAgeMonths || 66;
-    this.state.thisMonthViews = channel.thisMonthViews || channel.monthlyViews;
-    this.state.averageMonthlyViews = channel.averageMonthlyViews || Math.round(channel.totalViews / (channel.channelAgeMonths || 66));
+    this.state.actualViewsByDate = channel.actualViewsByDate || channel.thisMonthViews || channel.monthlyViews;
+    this.state.thisMonthViews = this.state.actualViewsByDate;
+    this.state.averageMonthlyViews = this.state.actualViewsByDate;
     this.state.viewScopeMode = 'this-month';
-    this.state.monthlyViews = this.state.thisMonthViews;
+    this.state.monthlyViews = this.state.actualViewsByDate;
     this.state.shortsPercent = channel.shortsShare;
     this.state.nicheId = channel.niche;
     this.state.durationId = channel.duration;
@@ -713,10 +708,10 @@ class TrueRpmApp {
     this.profileSubscribers.textContent = this.formatCompactNumber(this.state.subscribers);
     this.profileTotalViews.textContent = this.formatCompactNumber(this.state.totalViews);
     if (this.profileMonthlyViews) {
-      this.profileMonthlyViews.textContent = `${this.formatCompactNumber(this.state.thisMonthViews || this.state.monthlyViews)}/mo`;
+      this.profileMonthlyViews.textContent = `${this.formatCompactNumber(this.state.monthlyViews)}/mo`;
     }
     if (this.profileLifetimeAvg) {
-      this.profileLifetimeAvg.textContent = `${this.formatCompactNumber(this.state.averageMonthlyViews || Math.round(this.state.totalViews / 66))}/mo`;
+      this.profileLifetimeAvg.textContent = `${this.formatCompactNumber(this.state.actualViewsByDate || this.state.monthlyViews)}/mo`;
     }
     if (this.profileChannelAge) {
       this.profileChannelAge.textContent = this.state.joinedDate 
@@ -724,7 +719,7 @@ class TrueRpmApp {
         : `${this.state.channelAgeMonths || 66} Mos Active`;
     }
     if (this.btnDivLifetimeVal) {
-      this.btnDivLifetimeVal.textContent = `${this.formatCompactNumber(this.state.averageMonthlyViews || Math.round(this.state.totalViews / 66))}/mo`;
+      this.btnDivLifetimeVal.textContent = `${this.formatCompactNumber(this.state.actualViewsByDate || this.state.monthlyViews)}/mo`;
     }
 
     const countryObj = this.engine.getCountry(this.state.countryCode);
@@ -1426,13 +1421,10 @@ class TrueRpmApp {
 
   setViewScope(mode) {
     this.state.viewScopeMode = mode;
-    if (mode === 'this-month') {
-      this.state.monthlyViews = this.state.thisMonthViews || 26614610;
-    } else if (mode === 'lifetime-avg') {
-      const age = Math.max(1, this.state.channelAgeMonths || 66);
-      this.state.monthlyViews = this.state.averageMonthlyViews || Math.round((this.state.totalViews || 409455545) / age);
-    } else if (mode === 'annual-12') {
-      this.state.monthlyViews = Math.round((this.state.totalViews || 100000000) / 12);
+    if (mode === 'this-month' || mode === 'actual-by-date') {
+      this.state.monthlyViews = this.state.actualViewsByDate || this.state.thisMonthViews || 25141000;
+    } else if (mode === 'lifetime-avg' || mode === 'recent-uploads') {
+      this.state.monthlyViews = this.state.actualViewsByDate || this.state.monthlyViews;
     }
     if (this.sliderViews) {
       this.sliderViews.value = this.state.monthlyViews;
@@ -1448,16 +1440,10 @@ class TrueRpmApp {
     if (this.btnScopeLifetimeAvg) {
       this.btnScopeLifetimeAvg.classList.toggle('active', this.state.viewScopeMode === 'lifetime-avg');
     }
-    if (this.btnScopeAnnual12) {
-      this.btnScopeAnnual12.classList.toggle('active', this.state.viewScopeMode === 'annual-12');
-    }
 
     // Update Profile Card Mode Toggles active state
     if (this.btnProfileThisMonth) {
       this.btnProfileThisMonth.classList.toggle('active', this.state.viewScopeMode === 'this-month');
-    }
-    if (this.btnProfileLifetimeAvg) {
-      this.btnProfileLifetimeAvg.classList.toggle('active', this.state.viewScopeMode === 'lifetime-avg');
     }
 
     // Update Tab 4 buttons active state
@@ -1467,19 +1453,13 @@ class TrueRpmApp {
     if (this.btnDivLifetimeAvg) {
       this.btnDivLifetimeAvg.classList.toggle('active', this.state.viewScopeMode === 'lifetime-avg');
     }
-    if (this.btnDivSplit12) {
-      this.btnDivSplit12.classList.toggle('active', this.state.viewScopeMode === 'annual-12');
-    }
 
     // Update Caption text
     if (this.viewsScopeCaption) {
       if (this.state.viewScopeMode === 'this-month') {
-        this.viewsScopeCaption.innerHTML = `Active Mode: ⚡ <strong>This Month</strong> (${this.formatCompactNumber(this.state.monthlyViews)} recent 30-day velocity)`;
+        this.viewsScopeCaption.innerHTML = `Active Mode: ⚡ <strong>Actual Views by Date</strong> (${this.formatCompactNumber(this.state.monthlyViews)} from recent 30-day video uploads)`;
       } else if (this.state.viewScopeMode === 'lifetime-avg') {
-        const age = this.state.channelAgeMonths || 66;
-        this.viewsScopeCaption.innerHTML = `Active Mode: 📅 <strong>Lifetime Divided by Months</strong> (${this.formatCompactNumber(this.state.totalViews)} ÷ ${age} mos = ${this.formatCompactNumber(this.state.monthlyViews)}/mo)`;
-      } else if (this.state.viewScopeMode === 'annual-12') {
-        this.viewsScopeCaption.innerHTML = `Active Mode: ➗ <strong>Annual Divided by 12</strong> (${this.formatCompactNumber(this.state.monthlyViews * 12)} ÷ 12 = ${this.formatCompactNumber(this.state.monthlyViews)}/mo)`;
+        this.viewsScopeCaption.innerHTML = `Active Mode: 🎥 <strong>Recent Uploads Velocity</strong> (${this.formatCompactNumber(this.state.monthlyViews)} actual run-rate by upload date)`;
       } else {
         this.viewsScopeCaption.innerHTML = `Active Mode: 🎛️ <strong>Custom Monthly Target</strong> (${this.formatCompactNumber(this.state.monthlyViews)} views/mo)`;
       }
@@ -1489,7 +1469,7 @@ class TrueRpmApp {
   openDivideModal() {
     if (!this.divideModal) return;
     if (this.inputTotalViewsToDivide) {
-      this.inputTotalViewsToDivide.value = this.state.totalViews || (this.state.monthlyViews * 12);
+      this.inputTotalViewsToDivide.value = this.state.monthlyViews;
     }
     this.recalculateDivideModal();
     this.divideModal.classList.add('open');
@@ -1500,32 +1480,20 @@ class TrueRpmApp {
   }
 
   recalculateDivideModal() {
-    const rawVal = Number(this.inputTotalViewsToDivide?.value) || 0;
-    let months = 12;
-    if (this.state.dividePeriodMonths === '6') months = 6;
-    else if (this.state.dividePeriodMonths === '3') months = 3;
-    else if (this.state.dividePeriodMonths === 'channel') months = Math.max(1, this.state.channelAgeMonths || 66);
-    else months = 12;
-
-    const divided = Math.round(rawVal / months);
+    const rawVal = Number(this.inputTotalViewsToDivide?.value) || this.state.monthlyViews;
     if (this.dispCalcDividedViews) {
-      this.dispCalcDividedViews.textContent = `${this.formatNumber(divided)} views / month`;
+      this.dispCalcDividedViews.textContent = `${this.formatNumber(rawVal)} views / month`;
     }
   }
 
   applyDividedModalResult() {
-    const rawVal = Number(this.inputTotalViewsToDivide?.value) || 0;
-    let months = 12;
-    if (this.state.dividePeriodMonths === '6') months = 6;
-    else if (this.state.dividePeriodMonths === '3') months = 3;
-    else if (this.state.dividePeriodMonths === 'channel') months = Math.max(1, this.state.channelAgeMonths || 66);
-    else months = 12;
-
-    const divided = Math.max(1000, Math.round(rawVal / months));
-    this.state.monthlyViews = divided;
-    this.state.viewScopeMode = 'annual-12';
+    const rawVal = Number(this.inputTotalViewsToDivide?.value) || this.state.monthlyViews;
+    const views = Math.max(1000, Math.round(rawVal));
+    this.state.monthlyViews = views;
+    this.state.actualViewsByDate = views;
+    this.state.viewScopeMode = 'this-month';
     if (this.sliderViews) {
-      this.sliderViews.value = divided;
+      this.sliderViews.value = views;
     }
     this.closeDivideModal();
     this.updateUI();
