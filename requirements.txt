@@ -1,0 +1,1 @@
+# TrueRPM™ requires zero external pip dependencies (uses Python standard library)

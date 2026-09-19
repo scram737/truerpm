@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  truerpm:
+    build: .
+    container_name: truerpm-app
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - HOST=0.0.0.0
