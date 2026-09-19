@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrueRPM™ — Realistic YouTube Earnings & Geo-Traffic Revenue Engine</title>
+  <meta name="description" content="Calculate realistic YouTube AdSense and ecosystem revenue by factoring in country-specific traffic, niche RPMs, video length mid-rolls, and Shorts dilution. Stop trusting generic US-only estimates.">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <!-- Top Navigation / Header -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-group">
+        <div class="brand-logo">
+          <span class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
+              <polygon points="10 15 15 12 10 9 10 15" fill="currentColor"/>
+            </svg>
+          </span>
+          <div class="brand-text">
+            <h1>True<span>RPM</span></h1>
+            <span class="badge-tag">Reality Engine v2.6</span>
+          </div>
+        </div>
+        <p class="brand-tagline">Real Creator Earnings. Zero US-Only Bias. Precise Geo-RPMs.</p>
+      </div>
+
+      <div class="header-controls">
+        <div class="control-group">
+          <label for="currency-selector" class="sr-only">Currency</label>
+          <select id="currency-selector" class="select-pill" title="Select Currency">
+            <option value="USD" selected>USD ($)</option>
+            <option value="INR">INR (₹)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="CAD">CAD (C$)</option>
+            <option value="AUD">AUD (A$)</option>
+            <option value="BRL">BRL (R$)</option>
+          </select>
+        </div>
+
+        <button id="btn-export-report" class="btn-action-outline">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="7 10 12 15 17 10"/>
+            <line x1="12" y1="15" x2="12" y2="3"/>
+          </svg>
+          Export Audit
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notice Banner on Generic Trackers -->
+  <div class="problem-statement-banner">
+    <div class="banner-inner">
+      <div class="banner-badge">Why Most Estimators Lie</div>
+      <p>
+        Tools like SocialBlade assume a blanket flat US CPM ($0.25 - $4.00) on <strong>all views</strong>. In reality, <strong>1,000 views from India earn $0.35–$0.90</strong>, while <strong>1,000 views from the US earn $5.00–$18.00+</strong>. Furthermore, YouTube Shorts dilute RPM by up to <strong>95%</strong>. TrueRPM computes actual localized payouts.
+      </p>
+    </div>
+  </div>
+
+  <main class="main-layout">
+    <!-- Universal Channel Search & Zero-Manual-Work Audit -->
+    <section class="channel-search-section glass">
+      <div class="search-header-row">
+        <div class="search-title-wrap">
+          <div class="search-pulse-dot"></div>
+          <div>
+            <h2>Automated Channel Revenue Inspector</h2>
+            <p>Enter any YouTube channel name, @handle, or URL. Automatically verifies monetization status, inspects video formats, and infers audience geography.</p>
+          </div>
+        </div>
+        <div class="zero-work-badge">⚡ 100% Zero Manual Work</div>
+      </div>
+
+      <form id="form-channel-search" class="channel-search-form">
+        <div class="search-input-wrapper">
+          <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" id="input-search-channel" class="search-hero-input" placeholder="Paste YouTube channel URL, ID (UC...), @handle, or ytlarge link (e.g. UCjNVDW-rkDYR0aOKp3E-2wg)..." autocomplete="off">
+          <button type="submit" id="btn-search-analyze" class="btn-analyze">
+            <span class="btn-text">Audit Channel</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <line x1="5" y1="12" x2="19" y2="12"/>
+              <polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+      </form>
+
+      <!-- Quick Suggestion Chips -->
+      <div class="search-suggestions-row">
+        <span class="suggestions-label">Try instant lookup:</span>
+        <div class="suggestion-chips" id="search-suggestion-chips">
+          <button class="chip-suggest" data-handle="UCjNVDW-rkDYR0aOKp3E-2wg">🎬 @FilmyMoji (Reference)</button>
+          <button class="chip-suggest" data-handle="@CarryMinati">🇮🇳 @CarryMinati</button>
+          <button class="chip-suggest" data-handle="@MrBeast">🇺🇸 @MrBeast</button>
+          <button class="chip-suggest" data-handle="@mkbhd">🇺🇸 @mkbhd</button>
+          <button class="chip-suggest" data-handle="@GrahamStephan">📈 @GrahamStephan</button>
+          <button class="chip-suggest" data-handle="@dhruvrathee">🇮🇳 @dhruvrathee</button>
+          <button class="chip-suggest" data-handle="@TechBurner">🇮🇳 @TechBurner</button>
+          <button class="chip-suggest chip-warn" data-handle="@unmonetized_demo">⚠️ Unmonetized Demo</button>
+        </div>
+      </div>
+
+      <!-- Channel Profile Header Card (Shown after resolution) -->
+      <div class="channel-profile-card" id="channel-profile-card">
+        <div class="profile-left">
+          <div class="profile-avatar-wrap">
+            <img id="profile-avatar-img" src="" alt="Channel Avatar" class="profile-avatar">
+            <span class="profile-verified-badge" title="Verified Creator">✓</span>
+          </div>
+          <div class="profile-details">
+            <div class="profile-title-row">
+              <h3 id="profile-name">CarryMinati</h3>
+              <span id="profile-handle" class="profile-handle">@carryminati</span>
+              <div id="profile-monetization-badge" class="badge-monetized">
+                <span class="badge-icon">✅</span>
+                <span class="badge-text">Monetized (YPP Active)</span>
+              </div>
+            </div>
+            <p id="profile-monetization-reason" class="profile-reason">Enrolled in YouTube Partner Program with active AdSense and multi-million ad inventory.</p>
+          </div>
+        </div>
+
+        <div class="profile-stats-grid">
+          <div class="stat-pill">
+            <span class="stat-label">Subscribers</span>
+            <strong id="profile-subscribers">44.5M</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Lifetime Views</span>
+            <strong id="profile-total-views">3.85B</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Monthly Views</span>
+            <strong id="profile-monthly-views" class="highlight-cyan">28.0M</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Lifetime Monthly Avg</span>
+            <strong id="profile-lifetime-avg">--</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Channel Inception</span>
+            <strong id="profile-channel-age">Joined 2021</strong>
+          </div>
+          <div class="stat-pill profile-timeframe-pill">
+            <span class="stat-label">Apply to Calculator</span>
+            <div class="profile-mode-toggles">
+              <button type="button" class="btn-profile-mode active" id="btn-profile-this-month" title="Apply this month's velocity">⚡ This Month</button>
+              <button type="button" class="btn-profile-mode" id="btn-profile-lifetime-avg" title="Apply lifetime monthly average">📅 Monthly Avg</button>
+            </div>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Origin Country</span>
+            <strong id="profile-origin-country">🇮🇳 India (Tier 3)</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Format Split</span>
+            <strong id="profile-format-split" class="highlight-amber">71% Long / 29% Shorts</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">Country Traffic</span>
+            <strong id="profile-top-traffic" class="highlight-cyan">🇮🇳 82% · 🇵🇰 6% · 🇦🇪 4%</strong>
+          </div>
+          <div class="stat-pill">
+            <span class="stat-label">AdBlock Filter</span>
+            <strong id="profile-adblock-rate" class="highlight-rose">25% Unpaid</strong>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scan Progress Modal Overlay -->
+    <div class="scan-modal-overlay" id="scan-modal-overlay">
+      <div class="scan-modal-box glass">
+        <div class="scan-radar-icon">
+          <div class="radar-ping"></div>
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/>
+            <polygon points="10 15 15 12 10 9 10 15" fill="currentColor"/>
+          </svg>
+        </div>
+        <h3 id="scan-modal-title">Auditing Channel...</h3>
+        <p id="scan-modal-subtitle">Performing deep inspection of public signals and monetization status</p>
+        
+        <div class="scan-steps-list" id="scan-steps-list">
+          <div class="scan-step-item" id="step-1">
+            <span class="step-status-icon">⏳</span>
+            <span>Fetching Channel Metadata & Video Library...</span>
+          </div>
+          <div class="scan-step-item" id="step-2">
+            <span class="step-status-icon">⏳</span>
+            <span>Verifying YouTube Partner Program (YPP) Monetization...</span>
+          </div>
+          <div class="scan-step-item" id="step-3">
+            <span class="step-status-icon">⏳</span>
+            <span>Calculating Shorts vs Long-form view dilution...</span>
+          </div>
+          <div class="scan-step-item" id="step-4">
+            <span class="step-status-icon">⏳</span>
+            <span>Modeling Regional Viewer Geographic Traffic Flow...</span>
+          </div>
+          <div class="scan-step-item" id="step-5">
+            <span class="step-status-icon">⏳</span>
+            <span>Generating Geo-Weighted Realistic Take-Home...</span>
+          </div>
+        </div>
+
+        <div class="scan-progress-bar-wrap">
+          <div class="scan-progress-fill" id="scan-progress-fill" style="width: 0%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Channel Presets Bar -->
+    <section class="presets-section">
+      <div class="section-title-sm">
+        <span>Verified Creator Archetypes</span>
+        <span class="sub">Click to load verified scenarios across different niches and tiers</span>
+      </div>
+      <div class="presets-scroll" id="preset-buttons-container">
+        <!-- Injected via JavaScript -->
+      </div>
+    </section>
+
+    <!-- App Grid -->
+    <div class="app-workspace-grid">
+      <!-- LEFT COLUMN: Parameter Controls & Geo Traffic Allocator -->
+      <aside class="control-panel">
+        
+        <!-- Box 1: Core Channel Metrics -->
+        <div class="panel-card glass">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <span class="card-step-num">1</span>
+              <div>
+                <h2>Channel Views & Format</h2>
+                <p>Monthly traffic volume and format proportion</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card-body">
+            <!-- Channel Name Input -->
+            <div class="form-field">
+              <label for="input-channel-name" class="field-label">Channel or Creator Name</label>
+              <input type="text" id="input-channel-name" class="text-input" value="My Global Channel" placeholder="e.g. Veritasium, T-Series...">
+            </div>
+
+            <!-- Monthly Views with Division & Timeframe Scope -->
+            <div class="form-field">
+              <!-- Views Scope & Division Options -->
+              <div class="views-division-control">
+                <div class="field-label-row">
+                  <span class="division-control-title">Views Division & Timeframe</span>
+                  <button type="button" id="btn-open-divide-modal" class="btn-link-action" title="Custom view division calculator">
+                    ➗ Divide Views Tool
+                  </button>
+                </div>
+                <div class="views-scope-toggle-pills" id="views-scope-pills">
+                  <button type="button" class="scope-pill active" id="btn-scope-this-month" data-scope="this-month">
+                    <span class="scope-dot"></span> ⚡ This Month
+                  </button>
+                  <button type="button" class="scope-pill" id="btn-scope-lifetime-avg" data-scope="lifetime-avg">
+                    📅 Lifetime ÷ Months
+                  </button>
+                  <button type="button" class="scope-pill" id="btn-scope-annual-12" data-scope="annual-12">
+                    ➗ Total ÷ 12
+                  </button>
+                </div>
+                <div class="views-scope-caption" id="views-scope-caption">
+                  Active Mode: ⚡ <strong>This Month</strong> (Recent 30-Day Velocity)
+                </div>
+              </div>
+
+              <div class="field-label-row" style="margin-top: 0.75rem;">
+                <label for="slider-monthly-views" class="field-label">Views This Month</label>
+                <span class="field-value-display" id="display-monthly-views">10,000,000</span>
+              </div>
+              <input type="range" id="slider-monthly-views" min="10000" max="150000000" step="50000" value="10000000" class="custom-range">
+              <div class="range-ticks">
+                <span>10K</span>
+                <span>1M</span>
+                <span>10M</span>
+                <span>50M</span>
+                <span>150M+</span>
+              </div>
+            </div>
+
+            <!-- Shorts vs Long-Form Split -->
+            <div class="form-field">
+              <div class="field-label-row">
+                <label for="slider-shorts-percent" class="field-label">Shorts vs Long-Form Proportion</label>
+                <span class="field-value-display highlight-amber" id="display-shorts-percent">25% Shorts / 75% Long</span>
+              </div>
+              <input type="range" id="slider-shorts-percent" min="0" max="100" step="1" value="25" class="custom-range range-split">
+              <div class="split-view-bar" id="split-view-bar">
+                <div class="split-segment segment-long" id="bar-long-share" style="width: 75%;">
+                  <span>Long-form: 7.5M</span>
+                </div>
+                <div class="split-segment segment-shorts" id="bar-shorts-share" style="width: 25%;">
+                  <span>Shorts: 2.5M</span>
+                </div>
+              </div>
+              <span class="field-hint">Shorts earn from the Shorts Ad Pool ($0.02 - $0.12 RPM). High Shorts % drastically reduces total AdSense.</span>
+            </div>
+
+            <!-- Content Niche Selector -->
+            <div class="form-field">
+              <label for="select-niche" class="field-label">Content Niche / Category</label>
+              <select id="select-niche" class="custom-select">
+                <!-- Injected via JavaScript -->
+              </select>
+              <div class="niche-desc-badge" id="niche-desc-badge">
+                <!-- Injected via JavaScript -->
+              </div>
+            </div>
+
+            <!-- Video Duration & Mid-roll Potential -->
+            <div class="form-field">
+              <label class="field-label">Average Long-Form Video Duration</label>
+              <div class="duration-pill-grid" id="duration-selector-group">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- AdBlock & Unpaid Views Deflator -->
+            <div class="form-field adblock-field-card">
+              <div class="field-label-row">
+                <div class="label-with-badge">
+                  <label for="slider-adblock-rate" class="field-label">🛡️ AdBlock & Unpaid Views Filter</label>
+                  <span class="adblock-status-pill" id="badge-adblock-status">Active (-25%)</span>
+                </div>
+                <div class="adblock-toggle-container">
+                  <label class="toggle-switch-sm" title="Enable or disable AdBlock removal">
+                    <input type="checkbox" id="toggle-adblock" checked>
+                    <span class="toggle-slider-sm"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="adblock-stats-preview">
+                <span class="adblock-deduct-text" id="display-adblock-percent">25% AdBlock / Unpaid</span>
+                <span class="adblock-unpaid-text" id="display-unpaid-views">2.5M views earn $0.00</span>
+              </div>
+              <input type="range" id="slider-adblock-rate" min="0" max="60" step="1" value="25" class="custom-range range-adblock">
+              <div class="range-ticks">
+                <span>0% (SocialBlade)</span>
+                <span>25% (Standard)</span>
+                <span>45% (Tech/Gaming)</span>
+                <span>60%</span>
+              </div>
+              <span class="field-hint">Deducts desktop adblockers (uBlock, Brave) and zero-ad impressions. These views earn $0.00 AdSense.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Box 2: Geographic Traffic Distribution (THE GAME CHANGER) -->
+        <div class="panel-card glass">
+          <div class="card-header">
+            <div class="card-title-wrap">
+              <span class="card-step-num">2</span>
+              <div>
+                <h2>Country Traffic Mix</h2>
+                <p>Where your viewers actually reside</p>
+              </div>
+            </div>
+            <button id="btn-add-country" class="btn-sm-accent">+ Add Country</button>
+          </div>
+
+          <div class="card-body">
+            <!-- Quick Geographic Template Presets -->
+            <div class="geo-presets-row">
+              <span class="mini-label">Quick Regional Preset:</span>
+              <div class="geo-preset-chips" id="geo-preset-chips">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- Distribution Multi-Bar Preview -->
+            <div class="geo-multibar-container">
+              <div class="geo-multibar" id="geo-multibar">
+                <!-- Injected via JS -->
+              </div>
+              <div class="geo-multibar-legend" id="geo-multibar-legend">
+                <!-- Injected via JS -->
+              </div>
+            </div>
+
+            <!-- List of Countries with Individual Sliders -->
+            <div class="country-allocation-list" id="country-allocation-list">
+              <!-- Dynamically populated country sliders -->
+            </div>
+
+            <div class="traffic-sum-footer">
+              <span class="sum-status" id="traffic-sum-status">Total Share: 100%</span>
+              <button id="btn-normalize-traffic" class="btn-link" style="display:none;">Auto-balance to 100%</button>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- RIGHT COLUMN: The Reality Gap & Comprehensive Revenue Dashboard -->
+      <section class="results-dashboard">
+        
+        <!-- REALITY CHECK HERO: Traditional Tools vs TrueRPM Reality -->
+        <div class="reality-gap-card glass">
+          <div class="reality-header">
+            <div class="badge-alert">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              REALITY AUDIT COMPARISON
+            </div>
+            <h3 class="reality-title">The Fantasy vs. The True Payout</h3>
+            <p class="reality-subtitle">How generic estimators mislead creators and what you will actually see in YouTube Studio</p>
+          </div>
+
+          <div class="comparison-battlefield">
+            <!-- Naive Estimate (e.g. Social Blade standard model) -->
+            <div class="battle-box fantasy-box">
+              <div class="box-label">Generic Tracker Estimate (e.g. Social Blade)</div>
+              <div class="fantasy-range" id="stat-fantasy-range">$2,500 – $40,000 /mo</div>
+              
+              <!-- Fantasy Calculation Formula Box -->
+              <div class="battle-calc-pill fantasy-calc-pill">
+                <div class="calc-pill-title">📐 Naive Calculation Formula:</div>
+                <code class="calc-pill-code">(Total Views ÷ 1,000) × $0.25 to $4.00</code>
+                <div class="calc-pill-eval" id="fantasy-live-calc">
+                  <span>Low: 26.6M × $0.25/1k = $6,654</span>
+                  <span>High: 26.6M × $4.00/1k = $106,458</span>
+                </div>
+              </div>
+
+              <div class="fantasy-notes">
+                <span>❌ Assumes US-only audience</span>
+                <span>❌ Ignores Shorts dilution</span>
+                <span>❌ Assumes 0% AdBlock (charges ads on 100% of views)</span>
+                <span>❌ 16x useless spread</span>
+              </div>
+            </div>
+
+            <!-- VS Badge -->
+            <div class="battle-vs-badge">VS</div>
+
+            <!-- TrueRPM Engine Realistic Estimate -->
+            <div class="battle-box reality-box">
+              <div class="box-label-accent">TrueRPM Realistic Take-Home</div>
+              <div class="reality-highlight-price" id="stat-reality-price">$4,860 <span class="unit">/mo</span></div>
+              <div class="reality-bounds">
+                Expected Range: <strong id="stat-reality-range">$3,985 – $6,075</strong>
+              </div>
+              <div class="reality-effective-rpm">
+                Actual Channel RPM: <strong id="stat-effective-rpm">$0.49</strong> per 1,000 views
+              </div>
+
+              <!-- Reality Calculation Formula Box -->
+              <div class="battle-calc-pill reality-calc-pill">
+                <div class="calc-pill-title">📐 TrueRPM Mathematical Derivation:</div>
+                <code class="calc-pill-code">(Monetized Long × Geo RPM) + (Monetized Shorts × Diluted RPM)</code>
+                <div class="calc-pill-eval" id="reality-live-calc">
+                  <span>(1.3M × $1.71/1k) + (25.3M × $0.01/1k) = $2,617 /mo</span>
+                </div>
+              </div>
+
+              <div class="reality-adblock-badge" id="reality-adblock-pill">
+                🛡️ Deducts <span id="reality-adblock-percent-tag">25%</span> AdBlock & Unpaid Views ($0.00)
+              </div>
+            </div>
+          </div>
+
+          <!-- Diagnostic Explanation Bar -->
+          <div class="variance-diagnostic-bar" id="variance-diagnostic-bar">
+            <!-- Dynamic explanation pills injected via JS -->
+          </div>
+
+          <!-- Format Revenue Split Breakdown (Differentiating Long vs Shorts) -->
+          <div class="format-split-callout" id="format-split-callout">
+            <div class="format-split-card long-card">
+              <div class="split-card-header">
+                <span class="split-icon">🎥</span>
+                <span class="split-type">Long-Form Videos</span>
+              </div>
+              <div class="split-revenue" id="callout-long-revenue">$4,810 <span class="unit">/mo</span></div>
+              <div class="split-sub" id="callout-long-sub">RPM: $1.42 · 21.0M views (75%)</div>
+            </div>
+            <div class="format-split-card shorts-card">
+              <div class="split-card-header">
+                <span class="split-icon">⚡</span>
+                <span class="split-type">YouTube Shorts</span>
+                <span class="dilution-tag">95% Dilution</span>
+              </div>
+              <div class="split-revenue" id="callout-shorts-revenue">$50 <span class="unit">/mo</span></div>
+              <div class="split-sub" id="callout-shorts-sub">RPM: $0.007 · 7.0M views (25%)</div>
+            </div>
+          </div>
+
+          <!-- STEP-BY-STEP CALCULATION AUDIT (The Mathematical Proof) -->
+          <div class="calc-proof-card" id="calc-proof-card">
+            <div class="calc-proof-header">
+              <div class="calc-proof-title">
+                <span class="calc-proof-icon">🧮</span>
+                <div>
+                  <h4>Step-by-Step Calculation Breakdown</h4>
+                  <p>Mathematical proof contrasting the Naive US model vs. TrueRPM's localized engine</p>
+                </div>
+              </div>
+              <button type="button" class="btn-toggle-calc" id="btn-toggle-calc" aria-expanded="true">
+                <span id="btn-toggle-calc-text">Hide Calculation Steps</span>
+                <span class="toggle-arrow" id="btn-toggle-calc-arrow">▲</span>
+              </button>
+            </div>
+
+            <div class="calc-proof-body" id="calc-proof-body">
+              <div class="calc-steps-grid">
+                
+                <!-- STEP 1: Traffic & AdBlock Separation -->
+                <div class="calc-step-card">
+                  <div class="calc-step-header">
+                    <span class="step-badge step-1">STEP 1</span>
+                    <span class="step-title">Traffic & AdBlock Separation</span>
+                  </div>
+                  <div class="step-content">
+                    <div class="step-row">
+                      <span>Total Monthly Views:</span>
+                      <strong id="proof-total-views">26,614,545</strong>
+                    </div>
+                    <div class="step-row highlight-adblock">
+                      <span>🛡️ Unpaid AdBlock Views (<span id="proof-adblock-share">-25%</span>):</span>
+                      <strong id="proof-unpaid-views">-6,653,636 ($0 earned)</strong>
+                    </div>
+                    <div class="step-row highlight-monetized">
+                      <span>💰 Net Monetized Playbacks:</span>
+                      <strong id="proof-monetized-views">19,960,909</strong>
+                    </div>
+                    <div class="step-row highlight-long">
+                      <span>Long-Form Monetized (<span id="proof-long-share">5%</span>):</span>
+                      <strong id="proof-long-views">1,330,727</strong>
+                    </div>
+                    <div class="step-row highlight-shorts">
+                      <span>Shorts Monetized (<span id="proof-shorts-share">95%</span>):</span>
+                      <strong id="proof-shorts-views">25,283,818</strong>
+                    </div>
+                  </div>
+                  <div class="step-footer-note">
+                    🛡️ <strong>Unpaid Views Deducted:</strong> Zero ad revenue is paid on users running adblockers (uBlock, Brave) or when YouTube has no advertiser fill.
+                  </div>
+                </div>
+
+                <!-- STEP 2: Geo-Weighted RPM Calculation -->
+                <div class="calc-step-card">
+                  <div class="calc-step-header">
+                    <span class="step-badge step-2">STEP 2</span>
+                    <span class="step-title">Geo-Weighted RPM Matrix</span>
+                  </div>
+                  <div class="step-content">
+                    <div class="step-row">
+                      <span>Audience Geography:</span>
+                      <strong id="proof-geo-traffic-summary">82% IN · 6% PK · 4% BD · 4% US</strong>
+                    </div>
+                    <div class="step-row">
+                      <span>Niche Multiplier:</span>
+                      <strong id="proof-niche-mult">Entertainment (0.90x)</strong>
+                    </div>
+                    <div class="step-row">
+                      <span>Duration Boost:</span>
+                      <strong id="proof-duration-mult">>12 min Mid-rolls (1.35x)</strong>
+                    </div>
+                    <div class="step-row highlight-long-rpm">
+                      <span>Calculated Long-Form RPM:</span>
+                      <strong id="proof-effective-long-rpm">$1.71 / 1,000 views</strong>
+                    </div>
+                    <div class="step-row highlight-shorts-rpm">
+                      <span>Calculated Shorts RPM:</span>
+                      <strong id="proof-effective-shorts-rpm">$0.0137 / 1,000 views</strong>
+                    </div>
+                  </div>
+                  <div class="step-footer-note">
+                    🌍 <strong>Formula:</strong> <code>RPM = Σ (Country% × Base RPM × Fill Rate) × Niche × Duration</code>
+                  </div>
+                </div>
+
+                <!-- STEP 3: Sub-Total Revenue Sums -->
+                <div class="calc-step-card">
+                  <div class="calc-step-header">
+                    <span class="step-badge step-3">STEP 3</span>
+                    <span class="step-title">Format Revenue Multiplication</span>
+                  </div>
+                  <div class="step-content">
+                    <div class="step-formula-box">
+                      <div class="formula-line">
+                        <span class="f-label">🎥 Long-Form:</span>
+                        <span class="f-math" id="proof-long-calc">(1,330,727 ÷ 1,000) × $1.71</span>
+                        <span class="f-res" id="proof-long-total">= $2,271 /mo</span>
+                      </div>
+                      <div class="formula-line">
+                        <span class="f-label">⚡ Shorts:</span>
+                        <span class="f-math" id="proof-shorts-calc">(25,283,818 ÷ 1,000) × $0.0137</span>
+                        <span class="f-res" id="proof-shorts-total">= $346 /mo</span>
+                      </div>
+                    </div>
+                    <div class="step-sum-box">
+                      <span>True AdSense Take-Home:</span>
+                      <strong id="proof-sum-total">$2,271 + $346 = $2,617 /mo</strong>
+                    </div>
+                  </div>
+                  <div class="step-footer-note">
+                    💵 <strong>Effective Channel RPM:</strong> <strong id="proof-blended-rpm">$0.10</strong> per 1,000 all-inclusive views.
+                  </div>
+                </div>
+
+                <!-- STEP 4: The Fantasy Contrast -->
+                <div class="calc-step-card fantasy-contrast-card">
+                  <div class="calc-step-header">
+                    <span class="step-badge fantasy">AUDIT</span>
+                    <span class="step-title">The Fantasy Flaws Unmasked</span>
+                  </div>
+                  <div class="step-content">
+                    <div class="contrast-line">
+                      <span class="c-title">Generic Tracker Math:</span>
+                      <code id="proof-fantasy-formula-detail">(26,614,545 ÷ 1,000) × $0.25 to $4.00</code>
+                    </div>
+                    <div class="contrast-result" id="proof-fantasy-result-detail">
+                      = $6,654 to $106,458 /mo (16x spread!)
+                    </div>
+                    <ul class="flaw-bullet-list">
+                      <li><strong>Country Ignored:</strong> Assumes all views earn US auction rates ($4.00) rather than actual regional advertiser bids.</li>
+                      <li><strong>Shorts Ignored:</strong> Assumes 100% desktop long-form video inventory, ignoring 95% 60-second Shorts dilution.</li>
+                      <li><strong>AdBlock Ignored:</strong> Assumes 100% of viewers watch ads. In reality, <span id="proof-adblock-flaw">25%</span> use adblockers or have zero ads served, earning $0.</li>
+                      <li><strong>Reality Gap:</strong> Generic tool overstates creator revenue by up to <strong><span id="proof-overestimate-multiple">40x</span></strong>!</li>
+                    </ul>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KEY REVENUE METRICS CARDS -->
+        <div class="metrics-quad-grid">
+          <div class="metric-card glass">
+            <span class="metric-title">Monthly AdSense (Net)</span>
+            <div class="metric-value" id="card-monthly-adsense">$4,860</div>
+            <span class="metric-sub" id="card-daily-adsense">~$160 / day</span>
+            <div class="metric-badge-status green">After YouTube 45% Cut</div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-title">Annual AdSense Run-Rate</span>
+            <div class="metric-value" id="card-annual-adsense">$58,320</div>
+            <span class="metric-sub">Pure YouTube Ad Payout</span>
+            <div class="metric-badge-status blue">12-Month Projection</div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-title">Audience Purchasing Tier</span>
+            <div class="metric-value font-text" id="card-tier-mix">78% Tier 3</div>
+            <span class="metric-sub" id="card-tier-details">High Volume, Lower CPM</span>
+            <div class="metric-badge-status amber">Ad Auction Power</div>
+          </div>
+
+          <div class="metric-card glass">
+            <span class="metric-title">Total Creator Ecosystem</span>
+            <div class="metric-value highlight-cyan" id="card-ecosystem-total">$7,420 <span class="unit">/mo</span></div>
+            <span class="metric-sub">AdSense + Brand Deals + Memberships</span>
+            <div class="metric-badge-status purple">Complete Creator Model</div>
+          </div>
+        </div>
+
+        <!-- BREAKDOWN TABS & PANELS -->
+        <div class="results-tabbed-card glass">
+          <div class="tab-nav">
+            <button class="tab-btn active" data-target="tab-country-breakdown">Geographic Revenue Contribution</button>
+            <button class="tab-btn" data-target="tab-format-breakdown">Format & Length Breakdown</button>
+            <button class="tab-btn" data-target="tab-multistream">Multi-Stream Ecosystem Potential</button>
+            <button class="tab-btn" data-target="tab-monthly-division">📅 12-Month Views Division (This Month)</button>
+          </div>
+
+          <div class="tab-contents">
+            <!-- TAB 1: Country Breakdown Table -->
+            <div class="tab-pane active" id="tab-country-breakdown">
+              <div class="pane-intro">
+                <p>See the staggering difference between <strong>View Share %</strong> and <strong>Revenue Share %</strong>. A country with only 5% of views can often generate over 50% of your earnings.</p>
+              </div>
+              
+              <div class="table-responsive">
+                <table class="data-table" id="table-country-contributions">
+                  <thead>
+                    <tr>
+                      <th>Country</th>
+                      <th>Tier</th>
+                      <th>View Share</th>
+                      <th>Monthly Views</th>
+                      <th>Effective RPM</th>
+                      <th>Total Earned</th>
+                      <th>% of Your Revenue</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- TAB 2: Format & Duration Breakdown -->
+            <div class="tab-pane" id="tab-format-breakdown">
+              <div class="format-split-details">
+                <div class="format-card long-card">
+                  <div class="format-header">
+                    <h4>Long-Form Videos</h4>
+                    <span class="format-badge">High RPM Engine</span>
+                  </div>
+                  <div class="format-body">
+                    <div class="format-stat-row">
+                      <span>Monthly Views:</span>
+                      <strong id="stat-format-long-views">7,500,000</strong>
+                    </div>
+                    <div class="format-stat-row">
+                      <span>Weighted Long-Form RPM:</span>
+                      <strong id="stat-format-long-rpm">$0.62</strong>
+                    </div>
+                    <div class="format-stat-row">
+                      <span>Duration Mid-Roll Multiplier:</span>
+                      <strong id="stat-format-duration-mult">1.70x (8-14 min)</strong>
+                    </div>
+                    <div class="format-stat-row total-highlight">
+                      <span>Monthly Long-Form Revenue:</span>
+                      <strong id="stat-format-long-revenue">$4,650</strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="format-card shorts-card">
+                  <div class="format-header">
+                    <h4>YouTube Shorts</h4>
+                    <span class="format-badge shorts">Ad Pool Share</span>
+                  </div>
+                  <div class="format-body">
+                    <div class="format-stat-row">
+                      <span>Monthly Views:</span>
+                      <strong id="stat-format-shorts-views">2,500,000</strong>
+                    </div>
+                    <div class="format-stat-row">
+                      <span>Weighted Shorts RPM:</span>
+                      <strong id="stat-format-shorts-rpm">$0.084</strong>
+                    </div>
+                    <div class="format-stat-row">
+                      <span>Monetization Model:</span>
+                      <strong>Global Creator Pool (55% Creator / 45% YT)</strong>
+                    </div>
+                    <div class="format-stat-row total-highlight">
+                      <span>Monthly Shorts Revenue:</span>
+                      <strong id="stat-format-shorts-revenue">$210</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ad-inventory-note">
+                <strong>Key Insight:</strong> Notice how 2.5 Million Shorts views produce only a tiny fraction of what Long-form generates. Creators focusing entirely on Shorts require 20x to 50x more views to equal a long-form creator's AdSense.
+              </div>
+            </div>
+
+            <!-- TAB 3: Multi-Stream Ecosystem Potential -->
+            <div class="tab-pane" id="tab-multistream">
+              <div class="pane-intro">
+                <p>Full-time creators rarely rely solely on AdSense. Here is how your audience purchasing power impacts brand sponsorships, channel memberships, and affiliate deals:</p>
+              </div>
+
+              <div class="stream-grid">
+                <div class="stream-card">
+                  <div class="stream-icon">💼</div>
+                  <h5>Brand Sponsorships</h5>
+                  <div class="stream-val" id="stream-brand-val">$1,800 /mo</div>
+                  <p class="stream-sub">Calculated based on Tier-1 long-form reach. Brands pay $20–$40 CPM for US/UK viewers vs $1–$3 CPM for Tier-3 viewers.</p>
+                </div>
+
+                <div class="stream-card">
+                  <div class="stream-icon">❤️</div>
+                  <h5>Memberships & SuperChats</h5>
+                  <div class="stream-val" id="stream-fan-val">$480 /mo</div>
+                  <p class="stream-sub">Direct fan patronage weighted by audience discretionary spending and credit card adoption.</p>
+                </div>
+
+                <div class="stream-card">
+                  <div class="stream-icon">🔗</div>
+                  <h5>Affiliate & Merchandise</h5>
+                  <div class="stream-val" id="stream-affiliate-val">$280 /mo</div>
+                  <p class="stream-sub">E-commerce, software referral links, and niche product recommendations.</p>
+                </div>
+              </div>
+
+              <div class="stream-total-bar">
+                <span>Combined Creator Monthly Take-Home:</span>
+                <strong id="stream-grand-total">$7,420 /mo</strong>
+              </div>
+            </div>
+
+            <!-- TAB 4: 12-Month Views & Earnings Division with This Month Focus -->
+            <div class="tab-pane" id="tab-monthly-division">
+              <div class="monthly-division-header">
+                <div>
+                  <h4>12-Month Views & Earnings Division Schedule</h4>
+                  <p>Divide annual views into month-by-month allocations, modeling YouTube AdSense advertiser seasonality (Q1 budget reset vs. Q4 holiday peak).</p>
+                </div>
+                <div class="this-month-highlight-box" id="banner-this-month-focus">
+                  <div class="this-month-pill">🔥 THIS MONTH FOCUS</div>
+                  <div class="this-month-val" id="disp-this-month-takehome">$4,691 /mo</div>
+                  <span class="this-month-sub" id="disp-this-month-views">26.6M views · Format & Geo weighted</span>
+                </div>
+              </div>
+
+              <!-- Quick Divide Tool Bar -->
+              <div class="divide-tools-bar">
+                <span class="tool-caption">Views Allocation Presets:</span>
+                <div class="divide-actions">
+                  <button type="button" class="btn-divide-action active" id="btn-div-this-month">
+                    ⚡ Use This Month Run-Rate
+                  </button>
+                  <button type="button" class="btn-divide-action" id="btn-div-lifetime-avg">
+                    📅 Use Lifetime Monthly Avg (<span id="btn-div-lifetime-val">--</span>)
+                  </button>
+                  <button type="button" class="btn-divide-action" id="btn-div-split-12">
+                    ➗ Divide 100M Views ÷ 12
+                  </button>
+                </div>
+              </div>
+
+              <!-- 12-Month Table -->
+              <div class="table-responsive">
+                <table class="data-table monthly-division-table" id="table-monthly-division">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Status</th>
+                      <th>Divided Views</th>
+                      <th>Long-Form Views</th>
+                      <th>Shorts Views</th>
+                      <th>AdSense Multiplier</th>
+                      <th>AdSense Take-Home</th>
+                      <th>Cumulative Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Injected via JS -->
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="monthly-summary-foot">
+                <div class="foot-stat">
+                  <span>Divided 12-Month Views Total:</span>
+                  <strong id="foot-annual-views">319,200,000</strong>
+                </div>
+                <div class="foot-stat">
+                  <span>Full Year Divided Take-Home:</span>
+                  <strong id="foot-annual-revenue" class="highlight-cyan">$56,293</strong>
+                </div>
+                <div class="foot-stat">
+                  <span>Average Divided Month:</span>
+                  <strong id="foot-avg-monthly">$4,691 /mo</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GLOBAL COUNTRY RPM EXPLORER & HEATMAP TABLE -->
+        <div class="panel-card glass country-database-explorer">
+          <div class="card-header">
+            <div>
+              <h3>Global YouTube RPM Database</h3>
+              <p>Explore real-world base RPMs, ad fill rates, and sponsor CPMs for 60+ countries</p>
+            </div>
+            <div class="table-filter-group">
+              <input type="text" id="input-country-search" class="search-input" placeholder="Search country or code...">
+              <select id="filter-tier-select" class="select-pill">
+                <option value="ALL">All Tiers</option>
+                <option value="Tier 1A">Tier 1A (Ultra High)</option>
+                <option value="Tier 1B">Tier 1B (High)</option>
+                <option value="Tier 2">Tier 2 (Medium)</option>
+                <option value="Tier 3">Tier 3 (Emerging)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="card-body no-padding">
+            <div class="table-responsive max-height-table">
+              <table class="data-table interactive-table" id="table-all-countries">
+                <thead>
+                  <tr>
+                    <th>Country</th>
+                    <th>Region</th>
+                    <th>Tier</th>
+                    <th>Base Long-Form RPM</th>
+                    <th>Shorts RPM</th>
+                    <th>Ad Fill Rate</th>
+                    <th>Sponsor CPM</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Injected via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </main>
+
+  <!-- Add Country Modal -->
+  <div class="modal-overlay" id="add-country-modal">
+    <div class="modal-box glass">
+      <div class="modal-header">
+        <h3>Add Country to Traffic Mix</h3>
+        <button id="btn-close-modal" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <label for="select-country-to-add" class="field-label">Select Country to Add</label>
+        <select id="select-country-to-add" class="custom-select">
+          <!-- Populated via JS -->
+        </select>
+        <div class="country-preview-stats" id="country-add-preview">
+          <!-- Details of selected country -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-confirm-add-country" class="btn-primary">Add Country</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Divide Views Modal -->
+  <div class="modal-overlay" id="divide-views-modal">
+    <div class="modal-box glass">
+      <div class="modal-header">
+        <h3>➗ Divide Views per Month Calculator</h3>
+        <button id="btn-close-divide-modal" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-field">
+          <label for="input-total-views-to-divide" class="field-label">Total Views to Divide</label>
+          <input type="number" id="input-total-views-to-divide" class="text-input" placeholder="e.g. 50000000" value="26600000">
+        </div>
+        <div class="form-field">
+          <label class="field-label">Divide Across Period</label>
+          <div class="divide-periods-grid">
+            <button type="button" class="divide-period-btn active" data-months="12">12 Months (Annual ÷ 12)</button>
+            <button type="button" class="divide-period-btn" data-months="6">6 Months (Half Year)</button>
+            <button type="button" class="divide-period-btn" data-months="3">3 Months (Quarter)</button>
+            <button type="button" class="divide-period-btn" data-months="channel">Channel Months Active</button>
+          </div>
+        </div>
+        <div class="division-result-preview" id="division-result-preview">
+          <span>Calculated Allocation per Month:</span>
+          <strong id="disp-calc-divided-views">2,216,667 / month</strong>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="btn-apply-divided-views" class="btn-primary">Apply as Monthly Views</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <p>TrueRPM™ Engine — Designed for creators seeking transparent, reality-grounded YouTube analytics.</p>
+      <p class="footer-disclaimer">Estimates are calculated using regional purchasing power, programmatic ad auction fill rates, and anonymized creator AdSense data. YouTube™ is a trademark of Google LLC.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>
