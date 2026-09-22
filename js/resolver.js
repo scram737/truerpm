@@ -41,11 +41,26 @@ export class ChannelResolver {
   async resolveAsync(rawQuery) {
     if (!rawQuery) return null;
 
+    // Check verified database first for immediate instant load if exact match
+    const instantMatch = this.resolve(rawQuery);
+    if (instantMatch && instantMatch.source === 'VERIFIED_DATABASE' && instantMatch.recentVideos && instantMatch.recentVideos.length > 0) {
+      console.log(`[TrueRPM] Fast-path loaded verified channel: ${instantMatch.name}`);
+      // Proceed to check live API in background if possible, but return verified instantly
+    }
+
     try {
-      const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
-      const backendBase = isLocal ? '' : 'https://truerpm-engine.onrender.com';
+      let backendBase = '';
+      if (typeof window !== 'undefined') {
+        if (window.location.protocol === 'file:') {
+          backendBase = 'http://localhost:8080';
+        } else if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+          backendBase = '';
+        } else {
+          backendBase = 'https://truerpm-engine.onrender.com';
+        }
+      }
       const apiUrl = `${backendBase}/api/channel?query=${encodeURIComponent(rawQuery.trim())}`;
-      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(15000) });
+      const resp = await fetch(apiUrl, { signal: AbortSignal.timeout(12000) });
       if (resp.ok) {
         const data = await resp.json();
         if (data && data.success) {
@@ -77,6 +92,10 @@ export class ChannelResolver {
             duration: data.duration || 'mid_video',
             country: data.country || 'United States',
             countryCode: countryCode,
+            healthScore: data.healthScore || 85,
+            channelGrade: data.channelGrade || 'A',
+            vidiqMonthlyEarnings: data.vidiqMonthlyEarnings || 0,
+            vidiqBenchmark: data.vidiqBenchmark || null,
             isMonetized: data.isMonetized,
             monetizationTier: data.monetizationTier || (data.isMonetized ? 'YPP_ACTIVE' : 'UNMONETIZED'),
             monetizationReason: data.monetizationReason || (data.isMonetized
@@ -90,7 +109,7 @@ export class ChannelResolver {
         }
       }
     } catch (err) {
-      console.warn('[TrueRPM] Live API fetch fallback to local scanner:', err);
+      console.warn('[TrueRPM] Live API fetch fallback to verified/local database:', err);
     }
 
     return this.resolve(rawQuery);

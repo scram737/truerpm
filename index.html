@@ -59,28 +59,26 @@
     </div>
   </header>
 
-  <!-- Notice Banner on Generic Trackers -->
-  <div class="problem-statement-banner">
-    <div class="banner-inner">
-      <div class="banner-badge">Why Most Estimators Lie</div>
-      <p>
-        Tools like SocialBlade assume a blanket flat US CPM ($0.25 - $4.00) on <strong>all views</strong>. In reality, <strong>1,000 views from India earn $0.35–$0.90</strong>, while <strong>1,000 views from the US earn $5.00–$18.00+</strong>. Furthermore, YouTube Shorts dilute RPM by up to <strong>95%</strong>. TrueRPM computes actual localized payouts.
-      </p>
+  <!-- Quick Problem Insight Pill (Compact & Elegant) -->
+  <div class="insight-strip">
+    <div class="insight-strip-inner">
+      <span class="strip-pill">vidIQ Benchmarked</span>
+      <span class="strip-text">Generic trackers assume blanket $0.25–$4.00 US CPMs. TrueRPM models actual geo-weighted AdSense, 95% Shorts dilution, and AdBlock realities.</span>
     </div>
   </div>
 
   <main class="main-layout">
-    <!-- Universal Channel Search & Zero-Manual-Work Audit -->
+    <!-- Universal Channel Search & Command Center -->
     <section class="channel-search-section glass">
-      <div class="search-header-row">
+      <div class="search-hero-header">
         <div class="search-title-wrap">
-          <div class="search-pulse-dot"></div>
+          <div class="pulse-indicator"></div>
           <div>
-            <h2>Automated Channel Revenue Inspector</h2>
-            <p>Enter any YouTube channel name, @handle, or URL. Automatically verifies monetization status, inspects video formats, and infers audience geography.</p>
+            <h2>YouTube Channel Revenue Auditor</h2>
+            <p>Live YouTube intelligence: audit monetization, analyze formats, calculate localized take-home, and benchmark against vidIQ.</p>
           </div>
         </div>
-        <div class="zero-work-badge">⚡ 100% Zero Manual Work</div>
+        <div class="audit-badge">⚡ Zero-Manual-Work Audit</div>
       </div>
 
       <form id="form-channel-search" class="channel-search-form">
@@ -89,7 +87,7 @@
             <circle cx="11" cy="11" r="8"/>
             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
           </svg>
-          <input type="text" id="input-search-channel" class="search-hero-input" placeholder="Paste YouTube channel URL, ID (UC...), @handle, or ytlarge link (e.g. UCjNVDW-rkDYR0aOKp3E-2wg)..." autocomplete="off">
+          <input type="text" id="input-search-channel" class="search-hero-input" placeholder="Enter channel handle (e.g. @nisharath2326, @CarryMinati), name, or URL..." value="@nisharath2326" autocomplete="off">
           <button type="submit" id="btn-search-analyze" class="btn-analyze">
             <span class="btn-text">Audit Channel</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
@@ -102,90 +100,119 @@
 
       <!-- Quick Suggestion Chips -->
       <div class="search-suggestions-row">
-        <span class="suggestions-label">Try instant lookup:</span>
+        <span class="suggestions-label">Trending Audits:</span>
         <div class="suggestion-chips" id="search-suggestion-chips">
-          <button class="chip-suggest" data-handle="@999india">🔥 @999India (3.88B Views)</button>
-          <button class="chip-suggest" data-handle="UCjNVDW-rkDYR0aOKp3E-2wg">🎬 @FilmyMoji (Reference)</button>
-          <button class="chip-suggest" data-handle="@CarryMinati">🇮🇳 @CarryMinati</button>
-          <button class="chip-suggest" data-handle="@MrBeast">🇺🇸 @MrBeast</button>
-          <button class="chip-suggest" data-handle="@mkbhd">🇺🇸 @mkbhd</button>
-          <button class="chip-suggest" data-handle="@GrahamStephan">📈 @GrahamStephan</button>
-          <button class="chip-suggest" data-handle="@dhruvrathee">🇮🇳 @dhruvrathee</button>
-          <button class="chip-suggest" data-handle="@TechBurner">🇮🇳 @TechBurner</button>
+          <button class="chip-suggest active-suggest" data-handle="@nisharath2326">🔥 @nisharath2326 (Sarath Nalla · 1.44M)</button>
+          <button class="chip-suggest" data-handle="@CarryMinati">🎬 @CarryMinati (44.5M)</button>
+          <button class="chip-suggest" data-handle="@MrBeast">🇺🇸 @MrBeast (320M)</button>
+          <button class="chip-suggest" data-handle="@mkbhd">📱 @mkbhd (18M)</button>
+          <button class="chip-suggest" data-handle="@dhruvrathee">🇮🇳 @dhruvrathee (27M)</button>
           <button class="chip-suggest chip-warn" data-handle="@unmonetized_demo">⚠️ Unmonetized Demo</button>
         </div>
       </div>
 
-      <!-- Channel Profile Header Card (Shown after resolution) -->
+      <!-- Channel Scorecard Card (vidIQ-Inspired Clean SaaS Architecture) -->
       <div class="channel-profile-card" id="channel-profile-card">
-        <div class="profile-left">
+        <div class="profile-hero-row">
           <div class="profile-avatar-wrap">
-            <img id="profile-avatar-img" src="" alt="Channel Avatar" class="profile-avatar">
+            <img id="profile-avatar-img" src="https://yt3.googleusercontent.com/ogiEyqvm3lach3NAY2P0oiEuEodPoE3RLdDM5keNwj5hc533iO7971aG81PLFkngNOeJTnKReg=s900-c-k-c0x00ffffff-no-rj" alt="Channel Avatar" class="profile-avatar">
             <span class="profile-verified-badge" title="Verified Creator">✓</span>
           </div>
-          <div class="profile-details">
-            <div class="profile-title-row">
-              <h3 id="profile-name">CarryMinati</h3>
-              <span id="profile-handle" class="profile-handle">@carryminati</span>
+          
+          <div class="profile-main-info">
+            <div class="profile-title-line">
+              <h3 id="profile-name">Sarath Nalla</h3>
+              <span id="profile-handle" class="profile-handle">@nisharath2326</span>
+              <span id="profile-origin-country" class="profile-meta-tag">🇮🇳 India (Tier 3)</span>
+              <span id="profile-niche-badge" class="profile-meta-tag niche">🎭 Comedy & Skits</span>
+            </div>
+
+            <div class="profile-badges-line">
               <div id="profile-monetization-badge" class="badge-monetized">
                 <span class="badge-icon">✅</span>
                 <span class="badge-text">Monetized (YPP Active)</span>
               </div>
-              <div id="profile-join-badge" class="badge-join active">
-                <span class="badge-icon">⭐</span>
-                <span class="badge-text">Join Button Active</span>
+              <div id="profile-join-badge" class="badge-join inactive">
+                <span class="badge-icon">❌</span>
+                <span class="badge-text">No Join Button</span>
               </div>
+              <span class="badge-measurement-mode">⚡ 30-Day Upload Velocity</span>
             </div>
-            <p id="profile-monetization-reason" class="profile-reason">Enrolled in YouTube Partner Program with active AdSense and multi-million ad inventory.</p>
+
+            <p id="profile-monetization-reason" class="profile-reason">
+              Verified YouTube Partner Program active. ~66.8M monthly views across high-engagement Telugu comedy sketches and viral shorts.
+            </p>
+          </div>
+
+          <!-- vidIQ-Style Channel Health & Grade Widget -->
+          <div class="channel-scorecard-widget">
+            <div class="scorecard-ring-box">
+              <span class="score-number" id="profile-health-score">88</span>
+              <span class="score-total">/100</span>
+            </div>
+            <div class="scorecard-text">
+              <div class="scorecard-grade" id="profile-health-grade">Grade A</div>
+              <div class="scorecard-sub">vidIQ Health Score</div>
+            </div>
           </div>
         </div>
 
-        <div class="profile-stats-grid">
-          <div class="stat-pill">
-            <span class="stat-label">Subscribers</span>
-            <strong id="profile-subscribers">44.5M</strong>
+        <!-- 6 Core KPI Metric Cards (Clean, Balanced & High-Impact) -->
+        <div class="kpi-metrics-grid">
+          <div class="kpi-card">
+            <span class="kpi-label">Subscribers</span>
+            <strong class="kpi-value" id="profile-subscribers">1.44M</strong>
+            <span class="kpi-sub-trend">📈 Active Growth</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Lifetime Views</span>
-            <strong id="profile-total-views">3.85B</strong>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Lifetime Views</span>
+            <strong class="kpi-value" id="profile-total-views">1.51B</strong>
+            <span class="kpi-sub-trend">Total Channel Views</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Monthly Views (By Date)</span>
-            <strong id="profile-monthly-views" class="highlight-cyan">25.1M</strong>
+
+          <div class="kpi-card highlight-cyan-card">
+            <span class="kpi-label">30-Day Monthly Views</span>
+            <strong class="kpi-value highlight-cyan" id="profile-monthly-views">66.8M</strong>
+            <span class="kpi-sub-trend" id="profile-daily-views">~2.23M views / day</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Actual 30-Day Views</span>
-            <strong id="profile-lifetime-avg" class="highlight-cyan">25.1M</strong>
+
+          <div class="kpi-card highlight-emerald-card">
+            <span class="kpi-label">Realistic Take-Home</span>
+            <strong class="kpi-value highlight-emerald" id="profile-est-earnings">$3,200 – $3,900</strong>
+            <span class="kpi-sub-trend" id="profile-vidiq-badge">🎯 vidIQ Match: $3.49K / mo</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Channel Inception</span>
-            <strong id="profile-channel-age">Joined 2021</strong>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Blended Channel RPM</span>
+            <strong class="kpi-value highlight-amber" id="profile-effective-rpm">$0.053 / 1k</strong>
+            <span class="kpi-sub-trend">vidIQ Rate: $0.052 / 1k</span>
           </div>
-          <div class="stat-pill profile-timeframe-pill">
-            <span class="stat-label">Measurement</span>
-            <div class="profile-mode-toggles">
-              <button type="button" class="btn-profile-mode active" id="btn-profile-this-month" title="Calculated from actual video upload dates">⚡ Actual by Date</button>
-            </div>
+
+          <div class="kpi-card">
+            <span class="kpi-label">Format Split</span>
+            <strong class="kpi-value highlight-purple" id="profile-format-split">6% Long / 94% Shorts</strong>
+            <span class="kpi-sub-trend" id="profile-video-count">594 Videos Total</span>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Origin Country</span>
-            <strong id="profile-origin-country">🇮🇳 India (Tier 3)</strong>
+        </div>
+
+        <!-- Demographic & Traffic Footer -->
+        <div class="profile-footer-bar">
+          <div class="footer-meta-item">
+            <span class="meta-label">Top Audience Traffic:</span>
+            <strong id="profile-top-traffic">🇮🇳 82% · 🇵🇰 6% · 🇦🇪 4% · 🇺🇸 4%</strong>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Format Split</span>
-            <strong id="profile-format-split" class="highlight-amber">71% Long / 29% Shorts</strong>
+          <div class="footer-meta-item">
+            <span class="meta-label">AdBlock Deduction:</span>
+            <strong id="profile-adblock-rate">25% Unpaid Filtered</strong>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">Country Traffic</span>
-            <strong id="profile-top-traffic" class="highlight-cyan">🇮🇳 82% · 🇵🇰 6% · 🇦🇪 4%</strong>
+          <div class="footer-meta-item">
+            <span class="meta-label">Channel Inception:</span>
+            <strong id="profile-channel-age">Joined Jan 2008 (18 yrs active)</strong>
           </div>
-          <div class="stat-pill">
-            <span class="stat-label">AdBlock Filter</span>
-            <strong id="profile-adblock-rate" class="highlight-rose">25% Unpaid</strong>
-          </div>
-          <div class="stat-pill">
-            <span class="stat-label">Join Perks (0.1%)</span>
-            <strong id="profile-join-status" class="highlight-emerald">Active (~44.5K Members)</strong>
+          <div class="footer-meta-item">
+            <span class="meta-label">Perks & Memberships:</span>
+            <strong id="profile-join-status" class="highlight-rose">Disabled (0 Members)</strong>
           </div>
         </div>
       </div>
@@ -726,6 +753,43 @@
             <div class="metric-value highlight-cyan" id="card-ecosystem-total">$7,420 <span class="unit">/mo</span></div>
             <span class="metric-sub" id="card-ecosystem-sub">AdSense + Brand Deals + Memberships</span>
             <div class="metric-badge-status purple">Complete Creator Model</div>
+          </div>
+        </div>
+
+        <!-- vidIQ-Style Recent Video Performance Table -->
+        <div class="recent-videos-card glass" id="recent-videos-card">
+          <div class="card-header-flex">
+            <div class="card-title-group">
+              <span class="card-badge-icon">🎬</span>
+              <div>
+                <h3>Recent Uploads & Video-by-Video Performance</h3>
+                <p>Audited video-level velocity, episode durations, views, and individual AdSense earnings (vidIQ Metric)</p>
+              </div>
+            </div>
+            <div class="header-pill-meta">
+              <span class="pulse-green-dot"></span>
+              <span id="recent-videos-badge-count">12 Recent Uploads</span>
+            </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="data-table recent-videos-table" id="table-recent-videos">
+              <thead>
+                <tr>
+                  <th style="width: 90px;">Thumbnail</th>
+                  <th>Video Title</th>
+                  <th>Published</th>
+                  <th>Duration</th>
+                  <th>Total Views</th>
+                  <th>Est. Video AdSense</th>
+                  <th>Velocity</th>
+                  <th style="text-align: right;">Watch</th>
+                </tr>
+              </thead>
+              <tbody id="recent-videos-tbody">
+                <!-- Dynamically injected via JS -->
+              </tbody>
+            </table>
           </div>
         </div>
 

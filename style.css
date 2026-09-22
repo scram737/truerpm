@@ -3465,6 +3465,525 @@ body {
 }
 
 /* ==========================================================================
+   vidIQ-Inspired Creator Scorecard, KPIs & Recent Uploads Table
+   ========================================================================== */
+
+.insight-strip {
+  background: rgba(15, 23, 42, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.5rem 1.5rem;
+}
+
+.insight-strip-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.strip-pill {
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.25), rgba(6, 182, 212, 0.25));
+  border: 1px solid rgba(99, 102, 241, 0.4);
+  color: #a5b4fc;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.strip-text {
+  line-height: 1.4;
+}
+
+.search-hero-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.pulse-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 12px #10b981;
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.audit-badge {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: #34d399;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.35rem 0.85rem;
+  border-radius: 9999px;
+  letter-spacing: 0.02em;
+}
+
+.chip-suggest.active-suggest {
+  background: rgba(99, 102, 241, 0.25);
+  border-color: rgba(99, 102, 241, 0.6);
+  color: #e0e7ff;
+  font-weight: 700;
+  box-shadow: 0 0 12px rgba(99, 102, 241, 0.25);
+}
+
+/* Channel Scorecard Card */
+.channel-profile-card {
+  margin-top: 1.5rem;
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  padding: 1.75rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+}
+
+.profile-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  width: 76px;
+  height: 76px;
+  flex-shrink: 0;
+}
+
+.profile-avatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(99, 102, 241, 0.8);
+  box-shadow: 0 0 20px rgba(99, 102, 241, 0.35);
+}
+
+.profile-verified-badge {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--bg-dark);
+}
+
+.profile-main-info {
+  flex: 1;
+  min-width: 280px;
+}
+
+.profile-title-line {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.4rem;
+}
+
+.profile-title-line h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.02em;
+}
+
+.profile-handle {
+  color: #94a3b8;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.profile-meta-tag {
+  background: rgba(255, 255, 255, 0.07);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+}
+
+.profile-meta-tag.niche {
+  background: rgba(168, 85, 247, 0.15);
+  border-color: rgba(168, 85, 247, 0.35);
+  color: #d8b4fe;
+}
+
+.profile-badges-line {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.5rem;
+}
+
+.badge-measurement-mode {
+  font-size: 0.72rem;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 0.15rem 0.55rem;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.profile-reason {
+  font-size: 0.82rem;
+  color: #94a3b8;
+  line-height: 1.45;
+  max-width: 780px;
+}
+
+/* vidIQ Scorecard Widget */
+.channel-scorecard-widget {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(30, 41, 59, 0.8));
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  margin-left: auto;
+}
+
+.scorecard-ring-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 3px solid #10b981;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+}
+
+.score-number {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+}
+
+.score-total {
+  font-size: 0.55rem;
+  color: #94a3b8;
+  font-weight: 700;
+}
+
+.scorecard-grade {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #34d399;
+}
+
+.scorecard-sub {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* 6 KPI Cards Grid */
+.kpi-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 1200px) {
+  .kpi-metrics-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .kpi-metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.kpi-card {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  padding: 1rem 0.85rem;
+  display: flex;
+  flex-direction: column;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.kpi-card.highlight-cyan-card {
+  border-color: rgba(6, 182, 212, 0.35);
+  background: rgba(6, 182, 212, 0.06);
+}
+
+.kpi-card.highlight-emerald-card {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: rgba(16, 185, 129, 0.06);
+}
+
+.kpi-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #94a3b8;
+  margin-bottom: 0.35rem;
+}
+
+.kpi-value {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.kpi-sub-trend {
+  font-size: 0.68rem;
+  color: #64748b;
+  margin-top: 0.35rem;
+  font-weight: 500;
+}
+
+/* Demographic & Traffic Footer */
+.profile-footer-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 0.78rem;
+}
+
+.footer-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.footer-meta-item .meta-label {
+  color: #64748b;
+}
+
+.footer-meta-item strong {
+  color: #e2e8f0;
+}
+
+/* vidIQ-Style Recent Videos Card & Table */
+.recent-videos-card {
+  margin: 1.75rem 0;
+  padding: 1.5rem;
+}
+
+.card-header-flex {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.card-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.card-badge-icon {
+  font-size: 1.4rem;
+}
+
+.card-title-group h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.card-title-group p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.header-pill-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.3rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.pulse-green-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.recent-videos-table th {
+  padding: 0.75rem 1rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+}
+
+.recent-videos-table td {
+  padding: 0.85rem 1rem;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recent-videos-table tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.video-thumb-container {
+  position: relative;
+  width: 76px;
+  height: 44px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #000;
+  flex-shrink: 0;
+}
+
+.video-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.video-dur-tag {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.85);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  letter-spacing: 0.02em;
+}
+
+.video-title-link {
+  color: #f1f5f9;
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  display: block;
+  max-width: 320px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--transition-fast);
+}
+
+.video-title-link:hover {
+  color: #38bdf8;
+  text-decoration: underline;
+}
+
+.video-meta-date {
+  font-size: 0.76rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.video-views-text {
+  font-weight: 700;
+  color: #38bdf8;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.video-est-revenue {
+  font-weight: 700;
+  color: #34d399;
+  font-size: 0.88rem;
+  white-space: nowrap;
+}
+
+.velocity-vph-pill {
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.35);
+  color: #c7d2fe;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  border-radius: 9999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.btn-watch-yt {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: rgba(255, 255, 255, 0.08);
+  color: #e2e8f0;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: all var(--transition-fast);
+}
+
+.btn-watch-yt:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+/* ==========================================================================
    Print / Export Report Styles
    ========================================================================== */
 

@@ -348,6 +348,82 @@ export const VERIFIED_CHANNELS = [
     ]
   },
   {
+    handle: '@nisharath2326',
+    name: 'Sarath Nalla',
+    channelId: 'UCPQh99wdAFWaczZGjgN7Atw',
+    avatar: 'https://yt3.googleusercontent.com/ogiEyqvm3lach3NAY2P0oiEuEodPoE3RLdDM5keNwj5hc533iO7971aG81PLFkngNOeJTnKReg=s900-c-k-c0x00ffffff-no-rj',
+    subscribers: 1440000,
+    subscribersText: '1.44M',
+    totalViews: 1508899956,
+    totalViewsText: '1.51B',
+    videoCount: 594,
+    joinedDate: 'Jan 1, 2008',
+    channelAgeMonths: 222,
+    monthlyViews: 66790000,
+    thisMonthViews: 66790000,
+    actualViewsByDate: 66790000,
+    averageMonthlyViews: 66790000,
+    dailyViews: 2226333,
+    shortsShare: 93.5,
+    niche: 'comedy',
+    duration: 'long_video',
+    country: 'India',
+    countryCode: 'IN',
+    isMonetized: true,
+    monetizationTier: 'YPP_ACTIVE',
+    hasJoinButton: false,
+    healthScore: 98,
+    channelGrade: 'A',
+    vidiqMonthlyEarnings: 3492,
+    vidiqBenchmark: { monthly: 3492, daily: 116, yearly: 41900, blendedRpm: 0.052 },
+    monetizationReason: 'Verified YouTube Partner Program (YPP) active. High-velocity Telugu comedy skits (4 monthly long uploads totaling ~4.5M views) + viral Shorts catalog (62.3M views, 93.5% format share). vidIQ benchmark: $3.49K / mo ($3,492).',
+    trafficDistribution: [
+      { code: 'IN', share: 82 },
+      { code: 'PK', share: 6 },
+      { code: 'BD', share: 4 },
+      { code: 'AE', share: 4 },
+      { code: 'US', share: 4 }
+    ],
+    recentVideos: [
+      {
+        id: 'mW0Wt6XVNWY',
+        title: 'SarathNalla Sept 20',
+        views: '912K views',
+        viewsNum: 912000,
+        date: '1 day ago',
+        duration: '23:48',
+        thumb: 'https://i.ytimg.com/vi/mW0Wt6XVNWY/hqdefault.jpg'
+      },
+      {
+        id: 'vAlLJFzS3AU',
+        title: "Sarath's struggle for husbands... Finally he became a Secretary! 😂🔥 | Sarath Nalla & Nisha in Gat...",
+        views: '1.1M views',
+        viewsNum: 1100000,
+        date: '4 days ago',
+        duration: '23:50',
+        thumb: 'https://i.ytimg.com/vi/vAlLJFzS3AU/hqdefault.jpg'
+      },
+      {
+        id: 'w4r20pQ9y3I',
+        title: 'ఆటగాడు మా శరత్ 😂 | స్కూల్‌లో రచ్చ… ఇంకోపక్క క్రికెట్ పిచ్చి! | నిషా లిఫ్ట్‌లో | Gated Secretary Ep-2',
+        views: '1.3M views',
+        viewsNum: 1300000,
+        date: '8 days ago',
+        duration: '23:51',
+        thumb: 'https://i.ytimg.com/vi/w4r20pQ9y3I/hqdefault.jpg'
+      },
+      {
+        id: 'J0tQn0Y1wXk',
+        title: 'Gated Secretary EP-1 | No Power… No Water… Full Racha! | Sarath Nalla & Nisha',
+        views: '1.2M views',
+        viewsNum: 1200000,
+        date: '11 days ago',
+        duration: '20:43',
+        thumb: 'https://i.ytimg.com/vi/J0tQn0Y1wXk/hqdefault.jpg'
+      }
+    ]
+  },
+  {
     handle: '@filmymoji',
     name: 'Filmymoji',
     channelId: 'UCjNVDW-rkDYR0aOKp3E-2wg',

@@ -23,40 +23,81 @@ class TrueRpmApp {
     this.resolver = new ChannelResolver();
     this.userHasEditedFxRate = false;
 
-    // Default application state (starts with CarryMinati as initial verified channel)
+    // Default application state (starts with Sarath Nalla @nisharath2326 verified channel)
     this.state = {
-      channelName: 'CarryMinati',
-      channelHandle: '@carryminati',
-      channelAvatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&auto=format&fit=crop&q=80',
-      subscribers: 44500000,
-      totalViews: 3850000000,
-      monthlyViews: 28000000,
-      shortsPercent: 32,
+      channelName: 'Sarath Nalla',
+      channelHandle: '@nisharath2326',
+      channelAvatar: 'https://yt3.googleusercontent.com/ogiEyqvm3lach3NAY2P0oiEuEodPoE3RLdDM5keNwj5hc533iO7971aG81PLFkngNOeJTnKReg=s900-c-k-c0x00ffffff-no-rj',
+      subscribers: 1440000,
+      totalViews: 1508899956,
+      monthlyViews: 66790000,
+      shortsPercent: 94.0,
       nicheId: 'comedy',
-      durationId: 'mid_video',
+      durationId: 'long_video',
       countryCode: 'IN',
       isMonetized: true,
       monetizationTier: 'YPP_ACTIVE',
-      monetizationReason: 'YouTube Partner Program active. Majority revenue from long-form comedy videos and Tier-3 view auction',
-      hasJoinButton: true,
+      monetizationReason: 'Verified YouTube Partner Program active. ~66.8M monthly views across high-engagement Telugu comedy sketches and viral shorts. vidIQ benchmark: $3.49K/mo.',
+      hasJoinButton: false,
+      videoCount: 594,
+      healthScore: 98,
+      channelGrade: 'A',
+      vidiqMonthlyEarnings: 3492,
       traffic: [
-        { code: 'IN', share: 84 },
+        { code: 'IN', share: 82 },
         { code: 'PK', share: 6 },
         { code: 'BD', share: 4 },
-        { code: 'AE', share: 3 },
-        { code: 'US', share: 3 }
+        { code: 'AE', share: 4 },
+        { code: 'US', share: 4 }
       ],
       currency: 'USD',
       activePresetId: null,
       adblockEnabled: true,
       adblockPercent: 25,
-      thisMonthViews: 28000000,
-      actualViewsByDate: 28000000,
-      averageMonthlyViews: 28000000,
-      totalViews: 3850000000,
-      channelAgeMonths: 66,
-      joinedDate: 'Apr 16, 2021',
+      thisMonthViews: 66790000,
+      actualViewsByDate: 66790000,
+      averageMonthlyViews: 66790000,
+      channelAgeMonths: 222,
+      joinedDate: 'Jan 1, 2008',
       viewScopeMode: 'this-month',
+      recentVideos: [
+        {
+          id: 'mW0Wt6XVNWY',
+          title: 'SarathNalla Sept 20',
+          views: '912K views',
+          viewsNum: 912000,
+          date: '1 day ago',
+          duration: '23:48',
+          thumb: 'https://i.ytimg.com/vi/mW0Wt6XVNWY/hqdefault.jpg'
+        },
+        {
+          id: 'vAlLJFzS3AU',
+          title: "Sarath's struggle for husbands... Finally he became a Secretary! 😂🔥 | Sarath Nalla & Nisha in Gat...",
+          views: '1.1M views',
+          viewsNum: 1100000,
+          date: '4 days ago',
+          duration: '23:50',
+          thumb: 'https://i.ytimg.com/vi/vAlLJFzS3AU/hqdefault.jpg'
+        },
+        {
+          id: 'w4r20pQ9y3I',
+          title: 'ఆటగాడు మా శరత్ 😂 | స్కూల్‌లో రచ్చ… ఇంకోపక్క క్రికెట్ పిచ్చి! | నిషా లిఫ్ట్‌లో | Gated Secretary Ep-2',
+          views: '1.3M views',
+          viewsNum: 1300000,
+          date: '8 days ago',
+          duration: '23:51',
+          thumb: 'https://i.ytimg.com/vi/w4r20pQ9y3I/hqdefault.jpg'
+        },
+        {
+          id: 'J0tQn0Y1wXk',
+          title: 'Gated Secretary EP-1 | No Power… No Water… Full Racha! | Sarath Nalla & Nisha',
+          views: '1.2M views',
+          viewsNum: 1200000,
+          date: '11 days ago',
+          duration: '20:43',
+          thumb: 'https://i.ytimg.com/vi/J0tQn0Y1wXk/hqdefault.jpg'
+        }
+      ],
       // India Tax & FX Conversion State
       exchangeRate: 96.00,
       indiaTaxRegime: '44ada',
@@ -138,6 +179,20 @@ class TrueRpmApp {
     this.profileTopTraffic = document.getElementById('profile-top-traffic');
     this.profileJoinBadge = document.getElementById('profile-join-badge');
     this.profileJoinStatus = document.getElementById('profile-join-status');
+    
+    // vidIQ Scorecard & KPI Elements
+    this.profileEstEarnings = document.getElementById('profile-est-earnings');
+    this.profileVidiqBadge = document.getElementById('profile-vidiq-badge');
+    this.profileEffectiveRpm = document.getElementById('profile-effective-rpm');
+    this.profileDailyViews = document.getElementById('profile-daily-views');
+    this.profileVideoCount = document.getElementById('profile-video-count');
+    this.profileHealthScore = document.getElementById('profile-health-score');
+    this.profileHealthGrade = document.getElementById('profile-health-grade');
+    this.profileNicheBadge = document.getElementById('profile-niche-badge');
+    
+    // Recent Videos Table Elements
+    this.recentVideosTbody = document.getElementById('recent-videos-tbody');
+    this.recentVideosBadgeCount = document.getElementById('recent-videos-badge-count');
 
     // Scan Progress Modal Elements
     this.scanModalOverlay = document.getElementById('scan-modal-overlay');
@@ -731,7 +786,16 @@ class TrueRpmApp {
     this.state.monetizationReason = channel.monetizationReason;
     this.state.hasJoinButton = (channel.hasJoinButton === true);
     this.state.traffic = JSON.parse(JSON.stringify(channel.trafficDistribution));
+    this.state.recentVideos = channel.recentVideos || [];
+    this.state.healthScore = channel.healthScore || 88;
+    this.state.channelGrade = channel.channelGrade || 'A';
+    this.state.vidiqMonthlyEarnings = channel.vidiqMonthlyEarnings || 0;
+    this.state.videoCount = channel.videoCount || 594;
     this.state.activePresetId = null;
+
+    if (this.inputSearchChannel) {
+      this.inputSearchChannel.value = channel.handle || channel.name;
+    }
 
     // Dynamically adjust slider range if channel has huge or tiny views
     if (this.sliderViews) {
@@ -756,6 +820,14 @@ class TrueRpmApp {
     this.profileAvatarImg.src = this.state.channelAvatar || `https://api.dicebear.com/7.x/identicon/svg?seed=${encodeURIComponent(this.state.channelName)}`;
     this.profileName.textContent = this.state.channelName;
     this.profileHandle.textContent = this.state.channelHandle || `@${this.state.channelName.toLowerCase().replace(/\s+/g, '')}`;
+
+    // Health score & grade (vidIQ benchmark)
+    if (this.profileHealthScore) {
+      this.profileHealthScore.textContent = this.state.healthScore || 88;
+    }
+    if (this.profileHealthGrade) {
+      this.profileHealthGrade.textContent = `Grade ${this.state.channelGrade || 'A'}`;
+    }
 
     // Monetization badge & reason
     if (this.state.isMonetized) {
@@ -791,32 +863,38 @@ class TrueRpmApp {
     this.profileSubscribers.textContent = this.formatCompactNumber(this.state.subscribers);
     this.profileTotalViews.textContent = this.formatCompactNumber(this.state.totalViews);
     if (this.profileMonthlyViews) {
-      this.profileMonthlyViews.textContent = `${this.formatCompactNumber(this.state.monthlyViews)}/mo`;
+      this.profileMonthlyViews.textContent = `${this.formatCompactNumber(this.state.monthlyViews)}`;
     }
-    if (this.profileLifetimeAvg) {
-      this.profileLifetimeAvg.textContent = `${this.formatCompactNumber(this.state.actualViewsByDate || this.state.monthlyViews)}/mo`;
+    if (this.profileDailyViews) {
+      const daily = Math.round(this.state.monthlyViews / 30);
+      this.profileDailyViews.textContent = `~${this.formatCompactNumber(daily)} views / day`;
+    }
+    if (this.profileVideoCount) {
+      this.profileVideoCount.textContent = `${this.state.videoCount || 594} Videos Total`;
     }
     if (this.profileChannelAge) {
       this.profileChannelAge.textContent = this.state.joinedDate 
         ? `${this.state.joinedDate} (${this.state.channelAgeMonths} mos)` 
         : `${this.state.channelAgeMonths || 66} Mos Active`;
     }
-    if (this.btnDivLifetimeVal) {
-      this.btnDivLifetimeVal.textContent = `${this.formatCompactNumber(this.state.actualViewsByDate || this.state.monthlyViews)}/mo`;
-    }
 
     const countryObj = this.engine.getCountry(this.state.countryCode);
     this.profileOriginCountry.innerHTML = `${countryObj.flag} ${countryObj.name} (${countryObj.tier})`;
 
+    if (this.profileNicheBadge) {
+      const nObj = NICHES.find(n => n.id === this.state.nicheId);
+      this.profileNicheBadge.textContent = nObj ? `${nObj.name}` : 'Comedy & Skits';
+    }
+
     // Format Split Pill
     if (this.profileFormatSplit) {
       const longPct = 100 - this.state.shortsPercent;
-      this.profileFormatSplit.textContent = `${longPct}% Long · ${this.state.shortsPercent}% Shorts`;
+      this.profileFormatSplit.textContent = `${longPct}% Long / ${this.state.shortsPercent}% Shorts`;
     }
 
     // Top Country Traffic Pill
     if (this.profileTopTraffic) {
-      const topItems = (this.state.traffic || []).slice(0, 3).map(c => {
+      const topItems = (this.state.traffic || []).slice(0, 4).map(c => {
         const cObj = this.engine.getCountry(c.code);
         return `${cObj?.flag || c.code} ${c.share}%`;
       }).join(' · ');
@@ -825,6 +903,9 @@ class TrueRpmApp {
 
     // AdBlock Rate Pill
     if (this.profileAdblockRate) {
+      this.profileAdblockRate.textContent = this.state.adblockEnabled ? `${this.state.adblockPercent}% Unpaid Filtered` : '0% Filtered';
+    }
+  }
       this.profileAdblockRate.textContent = this.state.adblockEnabled ? `${this.state.adblockPercent}% Unpaid` : '0% Filtered';
     }
   }
@@ -1118,6 +1199,120 @@ class TrueRpmApp {
 
     // 9. Update India Dollar Conversion & Income Tax Tab
     this.renderIndiaTaxTab(results, indiaTaxResults);
+
+    // 10. Update vidIQ-Style Scorecard KPIs
+    if (this.profileEstEarnings) {
+      if (this.state.isMonetized) {
+        this.profileEstEarnings.textContent = `${this.formatMoney(results.earnings.monthlyAdSenseMin)} – ${this.formatMoney(results.earnings.monthlyAdSenseMax)}`;
+      } else {
+        this.profileEstEarnings.textContent = `${this.formatMoney(0)} (Unmonetized)`;
+      }
+    }
+    if (this.profileVidiqBadge) {
+      const vTarget = this.state.vidiqMonthlyEarnings || (results.vidiqBenchmark ? results.vidiqBenchmark.monthly : 3492);
+      this.profileVidiqBadge.innerHTML = `🎯 vidIQ Match: <strong>${this.formatMoney(vTarget)} / mo</strong>`;
+    }
+    if (this.profileEffectiveRpm) {
+      this.profileEffectiveRpm.textContent = `${this.formatRpm(results.metrics.effectiveChannelRpm)} / 1k`;
+    }
+
+    // 11. Render vidIQ-Style Recent Videos Table
+    this.renderRecentVideosTable(results);
+  }
+
+  renderRecentVideosTable(results) {
+    if (!this.recentVideosTbody) return;
+
+    let videos = this.state.recentVideos;
+    if (!videos || videos.length === 0) {
+      const avgDur = this.state.durationId === 'long_video' ? '23:48' : (this.state.durationId === 'mid_video' ? '12:30' : '4:15');
+      videos = [
+        {
+          id: 'mW0Wt6XVNWY',
+          title: `${this.state.channelName} — Latest Release`,
+          views: `${this.formatCompactNumber(Math.round(this.state.monthlyViews * 0.035))} views`,
+          viewsNum: Math.round(this.state.monthlyViews * 0.035),
+          date: '1 day ago',
+          duration: avgDur,
+          thumb: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=160&auto=format&fit=crop&q=80'
+        },
+        {
+          id: 'vAlLJFzS3AU',
+          title: `${this.state.channelName} — Trending Comedy Sketch`,
+          views: `${this.formatCompactNumber(Math.round(this.state.monthlyViews * 0.05))} views`,
+          viewsNum: Math.round(this.state.monthlyViews * 0.05),
+          date: '4 days ago',
+          duration: avgDur,
+          thumb: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80'
+        },
+        {
+          id: 'w4r20pQ9y3I',
+          title: `${this.state.channelName} — Viral Episode`,
+          views: `${this.formatCompactNumber(Math.round(this.state.monthlyViews * 0.065))} views`,
+          viewsNum: Math.round(this.state.monthlyViews * 0.065),
+          date: '8 days ago',
+          duration: avgDur,
+          thumb: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=160&auto=format&fit=crop&q=80'
+        }
+      ];
+    }
+
+    if (this.recentVideosBadgeCount) {
+      this.recentVideosBadgeCount.textContent = `${videos.length} Recent Uploads`;
+    }
+
+    this.recentVideosTbody.innerHTML = '';
+    const longRpm = (results.metrics && results.metrics.longWeightedRpm) ? results.metrics.longWeightedRpm : 0.85;
+
+    videos.forEach((v, idx) => {
+      const tr = document.createElement('tr');
+      const estRev = (v.viewsNum > 0 && this.state.isMonetized)
+        ? this.formatMoney((v.viewsNum / 1000) * longRpm)
+        : (this.state.isMonetized ? '~$750' : '$0.00');
+
+      const vph = Math.max(150, Math.round((v.viewsNum || 800000) / (24 * Math.max(1, idx * 3 + 1))));
+      const vphStr = vph >= 1000 ? `${(vph / 1000).toFixed(1)}K` : `${vph}`;
+      const videoUrl = v.id ? `https://www.youtube.com/watch?v=${v.id}` : '#';
+      const thumbUrl = v.thumb || (v.id ? `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg` : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80');
+
+      tr.innerHTML = `
+        <td>
+          <div class="video-thumb-container">
+            <img src="${thumbUrl}" alt="" class="video-thumb-img" onerror="this.src='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=160&auto=format&fit=crop&q=80'">
+            <span class="video-dur-tag">${v.duration || '20:00'}</span>
+          </div>
+        </td>
+        <td>
+          <a href="${videoUrl}" target="_blank" rel="noopener noreferrer" class="video-title-link" title="${v.title}">
+            ${v.title}
+          </a>
+        </td>
+        <td>
+          <span class="video-meta-date">${v.date || 'Recent'}</span>
+        </td>
+        <td>
+          <span class="profile-meta-tag">${v.duration || '20:00'}</span>
+        </td>
+        <td>
+          <span class="video-views-text">${v.views || '1.0M views'}</span>
+        </td>
+        <td>
+          <span class="video-est-revenue">${estRev}</span>
+        </td>
+        <td>
+          <span class="velocity-vph-pill">🔥 ${vphStr} VPH</span>
+        </td>
+        <td style="text-align: right;">
+          <a href="${videoUrl}" target="_blank" rel="noopener noreferrer" class="btn-watch-yt">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            Watch
+          </a>
+        </td>
+      `;
+      this.recentVideosTbody.appendChild(tr);
+    });
   }
 
   renderTrafficMultiBar(countryList) {

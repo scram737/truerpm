@@ -115,8 +115,14 @@ export class RevenueEngine {
       const cLongMonetized = longMonetizedViews * share;
       const cShortsMonetized = shortsMonetizedViews * share;
 
-      // Realistic CPM application: Long-form gets full niche and duration uplift
-      const effectiveCountryLongRpm = country.baseRpm * niche.multiplier * duration.multiplier;
+      // Realistic CPM application: Long-form duration & mid-roll inventory
+      // Tier 1 markets fill 3-4 mid-rolls (100% duration uplift).
+      // Tier 2 markets fill ~2 mid-rolls (60% duration uplift).
+      // Tier 3 markets have lower regional advertiser inventory and fill 1-2 mid-rolls (35% duration uplift).
+      const durationUplift = (duration.multiplier || 1.0) - 1.0;
+      const regionalFactor = country.tier.includes('Tier 1') ? 1.0 : (country.tier.includes('Tier 2') ? 0.60 : 0.35);
+      const effectiveDurationMultiplier = 1.0 + (durationUplift * regionalFactor);
+      const effectiveCountryLongRpm = country.baseRpm * niche.multiplier * effectiveDurationMultiplier;
       
       // Shorts RPM has a much smaller niche uplift (ad pool distribution model)
       const effectiveCountryShortsRpm = country.shortsRpm * Math.min(1.4, Math.max(0.7, 1 + (niche.multiplier - 1) * 0.35));
@@ -165,9 +171,9 @@ export class RevenueEngine {
     const potentialChannelRpm = monthlyViews > 0 ? (potentialTotalAdSense / monthlyViews) * 1000 : 0;
     const effectiveChannelRpm = isMonetized ? potentialChannelRpm : 0;
 
-    // Realistic range bounds (+- 20% variance for seasonality & ad inventory swings)
-    const monthlyAdSenseMin = isMonetized ? monthlyTotalAdSense * 0.82 : 0;
-    const monthlyAdSenseMax = isMonetized ? monthlyTotalAdSense * 1.25 : 0;
+    // Realistic range bounds (+- 10% realistic variance matching vidIQ calibration)
+    const monthlyAdSenseMin = isMonetized ? monthlyTotalAdSense * 0.90 : 0;
+    const monthlyAdSenseMax = isMonetized ? monthlyTotalAdSense * 1.10 : 0;
 
     // 6. Multi-Stream Income Projections
     // Brand Deals: heavily depend on Tier 1 long-form reach and niche multiplier
@@ -278,6 +284,14 @@ export class RevenueEngine {
         trueRpmMid: monthlyTotalAdSense,
         gapPercent: naiveMidpoint > 0 ? Math.round(((monthlyTotalAdSense - naiveMidpoint) / naiveMidpoint) * 100) : 0,
         isOverEstimatedByGeneric
+      },
+      vidiqBenchmark: {
+        monthly: Math.round(monthlyTotalAdSense),
+        min: Math.round(monthlyAdSenseMin),
+        max: Math.round(monthlyAdSenseMax),
+        daily: Math.round(monthlyTotalAdSense / 30.4),
+        yearly: Math.round(monthlyTotalAdSense * 12),
+        blendedRpm: Number(effectiveChannelRpm.toFixed(3))
       },
       countryBreakdown: countryRevenueContribution
     };
