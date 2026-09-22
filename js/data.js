@@ -751,3 +751,86 @@ export const VERIFIED_CHANNELS = [
   }
 ];
 
+export const TIER_AD_SPECS = [
+  {
+    tier: 'Tier 1A',
+    name: 'Tier 1A — Ultra-High CPM',
+    color: '#10b981',
+    badgeClass: 'tier-1a',
+    countries: 'US, CA, UK, AU, DE, NO, CH, NZ',
+    grossCpmRange: '$14.00 – $28.00',
+    netBaseRpm: '$6.20 – $8.50',
+    shortsRpm: '$0.065 – $0.090',
+    adFillRate: '90% – 94%',
+    midRollCapacity: '3–4 mid-rolls filled',
+    midRollFillFactor: 1.00,
+    diasporaDiscount: 1.00,
+    placingDetails: 'Pre-roll + Post-roll + Mid-rolls every 3–4 min. High advertiser inventory fills almost 100% of available breaks.',
+    pricingModel: 'Auction cleared by Fortune 500 brands, financial institutions, and enterprise tech.'
+  },
+  {
+    tier: 'Tier 1B',
+    name: 'Tier 1B — High CPM',
+    color: '#06b6d4',
+    badgeClass: 'tier-1b',
+    countries: 'SE, NL, DK, FR, SG, AE, JP, KR, AT',
+    grossCpmRange: '$8.50 – $16.00',
+    netBaseRpm: '$4.00 – $5.80',
+    shortsRpm: '$0.048 – $0.065',
+    adFillRate: '84% – 88%',
+    midRollCapacity: '2–3 mid-rolls filled',
+    midRollFillFactor: 0.85,
+    diasporaDiscount: 0.85,
+    placingDetails: 'Pre-roll + Post-roll + Mid-rolls every 4–5 min. Strong e-commerce and regional advertiser fill.',
+    pricingModel: 'Competitive national programmatic auctions with high smartphone purchasing power.'
+  },
+  {
+    tier: 'Tier 2',
+    name: 'Tier 2 — Medium CPM',
+    color: '#f59e0b',
+    badgeClass: 'tier-2',
+    countries: 'ES, IT, PL, SA, MX, BR, ZA, TR, MY',
+    grossCpmRange: '$3.00 – $7.50',
+    netBaseRpm: '$1.20 – $2.80',
+    shortsRpm: '$0.018 – $0.040',
+    adFillRate: '70% – 81%',
+    midRollCapacity: '1–2 mid-rolls filled',
+    midRollFillFactor: 0.60,
+    diasporaDiscount: 0.60,
+    placingDetails: 'Pre-roll + Post-roll + ~2 Mid-rolls. Moderate ad density; ~40% of mid-roll breaks pass unfilled.',
+    pricingModel: 'Emerging digital advertising markets, telecommunication, and FMCG consumer brands.'
+  },
+  {
+    tier: 'Tier 3',
+    name: 'Tier 3 — Emerging / Low CPM',
+    color: '#ec4899',
+    badgeClass: 'tier-3',
+    countries: 'IN, PK, BD, PH, ID, VN, EG, NG, KE',
+    grossCpmRange: '$0.80 – $2.40',
+    netBaseRpm: '$0.32 – $0.80',
+    shortsRpm: '$0.007 – $0.015',
+    adFillRate: '52% – 68%',
+    midRollCapacity: '1 mid-roll filled',
+    midRollFillFactor: 0.35,
+    diasporaDiscount: 0.40,
+    placingDetails: 'Pre-roll + 1 Mid-roll max. Low advertiser inventory; most mid-roll opportunities clear unfilled.',
+    pricingModel: 'High-volume programmatic auctions, telecommunications, FMCG, and mobile gaming apps.'
+  },
+  {
+    tier: 'Shorts Pool',
+    name: 'YouTube Shorts Ad Pool',
+    color: '#a855f7',
+    badgeClass: 'tier-shorts',
+    countries: 'Global Vertical Feed',
+    grossCpmRange: '$0.05 – $0.20',
+    netBaseRpm: '$0.01 – $0.09',
+    shortsRpm: '$0.01 – $0.09',
+    adFillRate: '98%',
+    midRollCapacity: '0 (In-feed only)',
+    midRollFillFactor: 0.00,
+    diasporaDiscount: 0.50,
+    placingDetails: 'Placed between Shorts in the vertical feed (every 3–5 scrolls). Zero mid-rolls permitted.',
+    pricingModel: 'Pooled global ad fund. 55% distributed to creators by view share minus music licensing costs.'
+  }
+];
+

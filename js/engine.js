@@ -84,13 +84,28 @@ export class RevenueEngine {
     const totalMonetizedViews = longMonetizedViews + shortsMonetizedViews;
     const unpaidViews = monthlyViews - totalMonetizedViews;
 
-    // 4. Country Level Calculations
+    // 4. Universal Market Origin & Tier Classification
+    // Determines the channel's domestic audience foundation to accurately price cross-border & diaspora ad auctions
+    const primaryCountryCode = countryCode || (normalizedTraffic.slice().sort((a, b) => b.normalizedShare - a.normalizedShare)[0]?.code) || 'IN';
+    const primaryCountryObj = COUNTRY_DATABASE.find(c => c.code === primaryCountryCode) || { tier: 'Tier 3', name: primaryCountryCode };
+    const isPrimaryTier1 = primaryCountryObj.tier && primaryCountryObj.tier.includes('Tier 1');
+    const isPrimaryTier2 = primaryCountryObj.tier && primaryCountryObj.tier.includes('Tier 2');
+    const isPrimaryTier3 = !isPrimaryTier1 && !isPrimaryTier2;
+
     let longWeightedRpm = 0;
     let shortsWeightedRpm = 0;
     let weightedFillRate = 0;
     let tier1Views = 0;
     let tier2Views = 0;
     let tier3Views = 0;
+    let tier1Monetized = 0;
+    let tier2Monetized = 0;
+    let tier3Monetized = 0;
+    let tier1Revenue = 0;
+    let tier2Revenue = 0;
+    let tier3Revenue = 0;
+    let totalPreRollRevenue = 0;
+    let totalMidRollRevenue = 0;
     let totalSponsorReachValue = 0;
 
     const countryBreakdown = normalizedTraffic.map(t => {
@@ -122,10 +137,34 @@ export class RevenueEngine {
       const durationUplift = (duration.multiplier || 1.0) - 1.0;
       const regionalFactor = country.tier.includes('Tier 1') ? 1.0 : (country.tier.includes('Tier 2') ? 0.60 : 0.35);
       const effectiveDurationMultiplier = 1.0 + (durationUplift * regionalFactor);
-      const effectiveCountryLongRpm = country.baseRpm * niche.multiplier * effectiveDurationMultiplier;
+
+      // Universal Cross-Border & Diaspora Ad Pricing Details:
+      // Advertisers price ad auctions based on viewer purchasing power and content language/origin.
+      // When a channel's primary origin is Tier 3 (e.g. India), Western Tier 1 viewers watch diaspora
+      // vernacular content where auctions clear at ethnic rates (~40% of US domestic tech/finance CPMs).
+      // When a channel is Tier 1 (e.g. US/UK), Tier 1 traffic clears at 100% full domestic rates.
+      let adjustedBaseRpm = country.baseRpm;
+      let adjustedShortsRpm = country.shortsRpm;
+
+      if (country.tier.includes('Tier 1')) {
+        const diasporaFactor = isPrimaryTier1 ? 1.0 : (isPrimaryTier2 ? 0.60 : 0.40);
+        adjustedBaseRpm = Math.min(country.baseRpm, country.baseRpm * diasporaFactor);
+        adjustedShortsRpm = Math.min(country.shortsRpm, country.shortsRpm * (isPrimaryTier1 ? 1.0 : 0.55));
+      } else if (country.tier.includes('Tier 2') && isPrimaryTier3) {
+        adjustedBaseRpm = country.baseRpm * 0.70;
+        adjustedShortsRpm = country.shortsRpm * 0.75;
+      }
+
+      const effectiveCountryLongRpm = adjustedBaseRpm * niche.multiplier * effectiveDurationMultiplier;
       
       // Shorts RPM has a much smaller niche uplift (ad pool distribution model)
-      const effectiveCountryShortsRpm = country.shortsRpm * Math.min(1.4, Math.max(0.7, 1 + (niche.multiplier - 1) * 0.35));
+      const effectiveCountryShortsRpm = adjustedShortsRpm * Math.min(1.4, Math.max(0.7, 1 + (niche.multiplier - 1) * 0.35));
+
+      // Separate Ad Placing Revenue: Pre-roll baseline vs Mid-roll incremental
+      const countryPreRollRpm = adjustedBaseRpm * niche.multiplier * 1.0;
+      const countryMidRollRpm = Math.max(0, effectiveCountryLongRpm - countryPreRollRpm);
+      const countryPreRollRev = isMonetized ? (cLongMonetized / 1000) * countryPreRollRpm : 0;
+      const countryMidRollRev = isMonetized ? (cLongMonetized / 1000) * countryMidRollRpm : 0;
 
       const countryLongRevenue = isMonetized ? (cLongMonetized / 1000) * effectiveCountryLongRpm : 0;
       const countryShortsRevenue = isMonetized ? (cShortsMonetized / 1000) * effectiveCountryShortsRpm : 0;
@@ -135,12 +174,21 @@ export class RevenueEngine {
       shortsWeightedRpm += effectiveCountryShortsRpm * share;
       weightedFillRate += country.fillRate * share;
 
+      totalPreRollRevenue += countryPreRollRev;
+      totalMidRollRevenue += countryMidRollRev;
+
       if (country.tier.includes('Tier 1')) {
         tier1Views += cViews;
+        tier1Monetized += cLongMonetized + cShortsMonetized;
+        tier1Revenue += countryTotalRevenue;
       } else if (country.tier.includes('Tier 2')) {
         tier2Views += cViews;
+        tier2Monetized += cLongMonetized + cShortsMonetized;
+        tier2Revenue += countryTotalRevenue;
       } else {
         tier3Views += cViews;
+        tier3Monetized += cLongMonetized + cShortsMonetized;
+        tier3Revenue += countryTotalRevenue;
       }
 
       // Sponsor value index
@@ -292,6 +340,32 @@ export class RevenueEngine {
         daily: Math.round(monthlyTotalAdSense / 30.4),
         yearly: Math.round(monthlyTotalAdSense * 12),
         blendedRpm: Number(effectiveChannelRpm.toFixed(3))
+      },
+      tierAdPlacing: {
+        potentialMidRollSlots: duration.midRolls || 0,
+        tier1FilledMidRolls: Number(((duration.midRolls || 0) * 1.00).toFixed(1)),
+        tier2FilledMidRolls: Number(((duration.midRolls || 0) * 0.60).toFixed(1)),
+        tier3FilledMidRolls: Number(((duration.midRolls || 0) * 0.35).toFixed(1)),
+        tier1Views: Math.round(tier1Views),
+        tier2Views: Math.round(tier2Views),
+        tier3Views: Math.round(tier3Views),
+        tier1Monetized: Math.round(tier1Monetized),
+        tier2Monetized: Math.round(tier2Monetized),
+        tier3Monetized: Math.round(tier3Monetized),
+        tier1Revenue,
+        tier2Revenue,
+        tier3Revenue,
+        tier1EffectiveRpm: tier1Views > 0 ? (tier1Revenue / tier1Views) * 1000 : 0,
+        tier2EffectiveRpm: tier2Views > 0 ? (tier2Revenue / tier2Views) * 1000 : 0,
+        tier3EffectiveRpm: tier3Views > 0 ? (tier3Revenue / tier3Views) * 1000 : 0,
+        preRollRevenue: totalPreRollRevenue,
+        midRollRevenue: totalMidRollRevenue,
+        shortsRevenue: monthlyShortsAdSense,
+        preRollSharePercent: monthlyTotalAdSense > 0 ? Math.round((totalPreRollRevenue / monthlyTotalAdSense) * 100) : 0,
+        midRollSharePercent: monthlyTotalAdSense > 0 ? Math.round((totalMidRollRevenue / monthlyTotalAdSense) * 100) : 0,
+        shortsSharePercent: monthlyTotalAdSense > 0 ? Math.round((monthlyShortsAdSense / monthlyTotalAdSense) * 100) : 0,
+        primaryMarketTier: primaryCountryObj.tier,
+        primaryCountryName: primaryCountryObj.name || primaryCountryCode
       },
       countryBreakdown: countryRevenueContribution
     };

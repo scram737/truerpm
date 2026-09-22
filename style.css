@@ -3984,6 +3984,248 @@ body {
 }
 
 /* ==========================================================================
+   Tier-Based Ad Placing & Pricing Tab Styles
+   ========================================================================== */
+
+.highlight-tab-tier {
+  border-color: rgba(245, 158, 11, 0.4) !important;
+  color: #fbbf24 !important;
+}
+
+.ad-placing-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.placing-card {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.35rem;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.placing-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.placing-card.highlight-gold {
+  border-color: rgba(245, 158, 11, 0.3);
+  background: linear-gradient(145deg, rgba(245, 158, 11, 0.08), rgba(15, 23, 42, 0.65));
+}
+
+.placing-card.highlight-purple {
+  border-color: rgba(168, 85, 247, 0.3);
+  background: linear-gradient(145deg, rgba(168, 85, 247, 0.08), rgba(15, 23, 42, 0.65));
+}
+
+.placing-header {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.placing-icon {
+  font-size: 1.5rem;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0.5rem;
+  border-radius: 8px;
+  line-height: 1;
+}
+
+.placing-header h5 {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.placing-rule {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  display: block;
+}
+
+.placing-val {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: #34d399;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 0.25rem;
+}
+
+.placing-val.highlight-amber {
+  color: #fbbf24;
+}
+
+.placing-val.highlight-purple {
+  color: #c084fc;
+}
+
+.placing-sub {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+  margin-bottom: 0.75rem;
+}
+
+.placing-desc {
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #64748b;
+  margin: 0;
+}
+
+/* Visual Ad Placement Timeline */
+.ad-placement-timeline-box {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.timeline-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.timeline-header-flex h4 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin: 0 0 0.25rem 0;
+}
+
+.timeline-header-flex p {
+  font-size: 0.8rem;
+  color: #94a3b8;
+  margin: 0;
+}
+
+.timeline-tier-legend {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.legend-pill {
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full, 9999px);
+}
+
+.legend-pill.t1 { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+.legend-pill.t2 { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+.legend-pill.t3 { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
+
+.timeline-visual-track {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+}
+
+.timeline-slot {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.85rem 0.65rem;
+  text-align: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.timeline-slot .slot-marker {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #64748b;
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.timeline-slot .slot-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.timeline-slot .slot-fill-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.45rem;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.slot-fill-badge.all {
+  background: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.slot-fill-badge.partial {
+  background: rgba(245, 158, 11, 0.2);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.slot-fill-badge.t1-only {
+  background: rgba(236, 72, 153, 0.2);
+  color: #f472b6;
+  border: 1px solid rgba(236, 72, 153, 0.3);
+}
+
+.timeline-caption-bar {
+  background: rgba(245, 158, 11, 0.08);
+  border-left: 3px solid #f59e0b;
+  padding: 0.75rem 1rem;
+  font-size: 0.78rem;
+  color: #cbd5e1;
+  border-radius: 0 6px 6px 0;
+  line-height: 1.5;
+}
+
+/* Tier Pricing Table */
+.tier-pricing-table-wrap {
+  background: rgba(15, 23, 42, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg, 12px);
+  padding: 1.5rem;
+}
+
+.tier-placing-table th {
+  white-space: nowrap;
+  font-size: 0.76rem;
+  letter-spacing: 0.04em;
+}
+
+.tier-placing-table td {
+  font-size: 0.82rem;
+  vertical-align: middle;
+}
+
+.tier-pill.tier-shorts {
+  background: rgba(168, 85, 247, 0.2);
+  color: #c084fc;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+/* ==========================================================================
    Print / Export Report Styles
    ========================================================================== */
 

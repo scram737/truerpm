@@ -2,7 +2,7 @@
  * TrueRPM — Application Controller & Dynamic UI Engine
  */
 
-import { COUNTRY_DATA, NICHES, DURATION_MODIFIERS, PRESET_CHANNELS, REGIONAL_PRESETS } from './data.js';
+import { COUNTRY_DATA, NICHES, DURATION_MODIFIERS, PRESET_CHANNELS, REGIONAL_PRESETS, TIER_AD_SPECS } from './data.js';
 import { RevenueEngine } from './engine.js';
 import { ChannelResolver } from './resolver.js';
 
@@ -316,6 +316,17 @@ class TrueRpmApp {
     this.streamFanSub = document.getElementById('stream-fan-sub');
     this.streamAffiliateVal = document.getElementById('stream-affiliate-val');
     this.streamGrandTotal = document.getElementById('stream-grand-total');
+
+    // Tier Ad Placing & Pricing Tab
+    this.adPlacingPrerollRev = document.getElementById('ad-placing-preroll-rev');
+    this.adPlacingPrerollSub = document.getElementById('ad-placing-preroll-sub');
+    this.adPlacingMidrollRev = document.getElementById('ad-placing-midroll-rev');
+    this.adPlacingMidrollSub = document.getElementById('ad-placing-midroll-sub');
+    this.adPlacingShortsRev = document.getElementById('ad-placing-shorts-rev');
+    this.adPlacingShortsSub = document.getElementById('ad-placing-shorts-sub');
+    this.timelineDurationBadge = document.getElementById('timeline-duration-badge');
+    this.timelineCaptionBar = document.getElementById('timeline-caption-bar');
+    this.tableTierPlacingTbody = document.getElementById('table-tier-placing-tbody');
 
     // Country Database
     this.tableAllCountries = document.querySelector('#table-all-countries tbody');
@@ -906,9 +917,6 @@ class TrueRpmApp {
       this.profileAdblockRate.textContent = this.state.adblockEnabled ? `${this.state.adblockPercent}% Unpaid Filtered` : '0% Filtered';
     }
   }
-      this.profileAdblockRate.textContent = this.state.adblockEnabled ? `${this.state.adblockPercent}% Unpaid` : '0% Filtered';
-    }
-  }
 
   getFlagHtml(country) {
     if (!country || !country.code || country.code.length !== 2) return country?.flag || '🌐';
@@ -1176,10 +1184,13 @@ class TrueRpmApp {
       }
     }
     if (this.cardTierMix) {
-      this.cardTierMix.textContent = `${results.metrics.tier1SharePercent}% Tier 1 · ${results.metrics.tier3SharePercent}% Tier 3`;
+      this.cardTierMix.textContent = `${results.metrics.tier1SharePercent}% Tier 1 · ${results.metrics.tier2SharePercent}% Tier 2 · ${results.metrics.tier3SharePercent}% Tier 3`;
     }
     if (this.cardTierDetails) {
-      this.cardTierDetails.textContent = `Weighted Fill Rate: ${results.metrics.weightedFillRate}%`;
+      const filledDesc = results.tierAdPlacing 
+        ? `${results.tierAdPlacing.tier3FilledMidRolls} Mid-rolls Filled · ${results.metrics.weightedFillRate}% Fill`
+        : `Weighted Fill Rate: ${results.metrics.weightedFillRate}%`;
+      this.cardTierDetails.textContent = `Ad Placing: ${filledDesc}`;
     }
     this.cardEcosystemTotal.innerHTML = `${this.formatMoney(results.earnings.totalEcosystemMonthly)} <span class="unit">/mo</span>`;
     if (this.cardEcosystemSub) {
@@ -1189,6 +1200,7 @@ class TrueRpmApp {
     // 7. Update Tabs Content
     this.renderCountryTable(results.countryBreakdown);
     this.renderFormatTab(results);
+    this.renderTierAdPlacingTab(results);
     this.renderMultiStreamTab(results);
 
     // 8. Update 12-Month Views Division & This Month Focus
@@ -1676,6 +1688,93 @@ class TrueRpmApp {
     }
     this.streamAffiliateVal.textContent = `${this.formatMoney(results.earnings.affiliateMonthly)} /mo`;
     this.streamGrandTotal.textContent = `${this.formatMoney(results.earnings.totalEcosystemMonthly)} /mo`;
+  }
+
+  // Tier-Based Ad Placing & Pricing Specifications Tab
+  renderTierAdPlacingTab(results) {
+    if (!results.tierAdPlacing) return;
+    const p = results.tierAdPlacing;
+
+    if (this.adPlacingPrerollRev) {
+      this.adPlacingPrerollRev.innerHTML = `${this.formatMoney(p.preRollRevenue)} <span class="unit">/mo</span>`;
+    }
+    if (this.adPlacingPrerollSub) {
+      this.adPlacingPrerollSub.textContent = `~${p.preRollSharePercent}% of AdSense · Skippable & Bumper Ads`;
+    }
+
+    if (this.adPlacingMidrollRev) {
+      this.adPlacingMidrollRev.innerHTML = `${this.formatMoney(p.midRollRevenue)} <span class="unit">/mo</span>`;
+    }
+    if (this.adPlacingMidrollSub) {
+      this.adPlacingMidrollSub.textContent = `~${p.midRollSharePercent}% of AdSense · ${p.tier3FilledMidRolls} to ${p.tier1FilledMidRolls} Mid-rolls / video`;
+    }
+
+    if (this.adPlacingShortsRev) {
+      this.adPlacingShortsRev.innerHTML = `${this.formatMoney(p.shortsRevenue)} <span class="unit">/mo</span>`;
+    }
+    if (this.adPlacingShortsSub) {
+      this.adPlacingShortsSub.textContent = `~${p.shortsSharePercent}% of AdSense · Vertical Feed Creator Pool`;
+    }
+
+    if (this.timelineDurationBadge) {
+      this.timelineDurationBadge.textContent = `Current Channel Cadence: ${results.duration.name} (${results.duration.multiplier}x Multiplier) · Potential Slots: ${p.potentialMidRollSlots}`;
+    }
+
+    if (this.timelineCaptionBar) {
+      this.timelineCaptionBar.innerHTML = `💡 <strong>Universal Ad Placing Model:</strong> Channel Primary Origin is <strong>${p.primaryCountryName} (${p.primaryMarketTier})</strong>. Western Tier 1 diaspora traffic clears at authentic ethnic auction rates (${p.tier1FilledMidRolls} mid-rolls filled). Regional Tier 3 ad inventory delivers ~${p.tier3FilledMidRolls} filled mid-rolls per episode.`;
+    }
+
+    if (this.tableTierPlacingTbody && TIER_AD_SPECS) {
+      this.tableTierPlacingTbody.innerHTML = '';
+      TIER_AD_SPECS.forEach(spec => {
+        const tr = document.createElement('tr');
+        
+        let tierViews = 0;
+        let tierRevenue = 0;
+        let tierShare = 0;
+        
+        if (spec.tier === 'Tier 1A') {
+          const factor = 0.7;
+          tierViews = Math.round(p.tier1Views * factor);
+          tierRevenue = p.tier1Revenue * factor;
+          tierShare = Math.round(results.metrics.tier1SharePercent * factor);
+        } else if (spec.tier === 'Tier 1B') {
+          const factor = 0.3;
+          tierViews = Math.round(p.tier1Views * factor);
+          tierRevenue = p.tier1Revenue * factor;
+          tierShare = Math.round(results.metrics.tier1SharePercent * factor);
+        } else if (spec.tier === 'Tier 2') {
+          tierViews = p.tier2Views;
+          tierRevenue = p.tier2Revenue;
+          tierShare = results.metrics.tier2SharePercent;
+        } else if (spec.tier === 'Tier 3') {
+          tierViews = p.tier3Views;
+          tierRevenue = p.tier3Revenue;
+          tierShare = results.metrics.tier3SharePercent;
+        } else if (spec.tier === 'Shorts Pool') {
+          tierViews = results.views.shorts;
+          tierRevenue = p.shortsRevenue;
+          tierShare = results.views.shortsPercent;
+        }
+
+        tr.innerHTML = `
+          <td><span class="tier-pill ${spec.badgeClass}">${spec.tier}</span></td>
+          <td><strong style="color: #cbd5e1; font-size: 0.78rem;">${spec.countries}</strong></td>
+          <td><span style="color: #94a3b8; font-weight: 600;">${spec.grossCpmRange}</span></td>
+          <td><strong style="color: #34d399;">${spec.netBaseRpm}</strong></td>
+          <td><span style="color: #c084fc; font-weight: 600;">${spec.shortsRpm}</span></td>
+          <td><span style="font-size: 0.78rem; color: #cbd5e1;">${spec.midRollCapacity}</span></td>
+          <td><span class="legend-pill ${spec.badgeClass.replace('tier-', 't')}">${spec.adFillRate}</span></td>
+          <td>
+            <div style="font-size: 0.8rem;">
+              <strong style="color: #fff;">${this.formatMoney(tierRevenue)}</strong>
+              <span style="color: #64748b; margin-left: 0.35rem;">(${tierShare}%)</span>
+            </div>
+          </td>
+        `;
+        this.tableTierPlacingTbody.appendChild(tr);
+      });
+    }
   }
 
   // Country Explorer Database Table
